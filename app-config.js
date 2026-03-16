@@ -5,5 +5,5 @@ window.APP_CONFIG = {
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
       ? "http://localhost:8080/api/auth"
-      : "https://replace-with-your-render-backend.onrender.com/api/auth",
+      : "https://library-management-backend-07hm.onrender.com/api/auth",
 };
