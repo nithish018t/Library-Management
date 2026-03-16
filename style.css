@@ -1,0 +1,800 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Background Animation */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('peter-herrmann-O_DUcg4cDlc-unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.stars::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 
+        100px 50px white, 200px 150px white, 300px 75px white,
+        120px 300px white, 250px 250px white, 350px 100px white,
+        450px 200px white, 500px 350px white, 150px 400px white,
+        600px 50px white, 700px 200px white, 600px 350px white;
+    animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Main container */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.login-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    gap: 40px;
+    align-items: center;
+}
+
+/* Illustration Section */
+.illustration-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeInLeft 0.8s ease-out;
+}
+
+.library-illustration {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
+}
+
+.book-stack {
+    animation: bounce 3s ease-in-out infinite;
+}
+
+.reading-person {
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-book-1 {
+    animation: float-book1 4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.floating-book-2 {
+    animation: float-book2 4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.shape-float-1 {
+    animation: float 3.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.shape-float-2 {
+    animation: float 4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.shape-float-3 {
+    animation: float 3.8s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.decoration-1 {
+    animation: rotate-slow 6s linear infinite;
+    transform-origin: 115px 395px;
+}
+
+.decoration-2 {
+    animation: rotate-slow-reverse 6s linear infinite;
+    transform-origin: 305px 420px;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes float-book1 {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-25px) rotate(-5deg);
+    }
+}
+
+@keyframes float-book2 {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(5deg);
+    }
+}
+
+@keyframes rotate-slow {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate-slow-reverse {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.illustration-text {
+    margin-top: 30px;
+    text-align: center;
+    color: #fff;
+    animation: fadeInUp 0.8s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+.illustration-text h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.illustration-text p {
+    font-size: 14px;
+    color: #5D4E37;
+    max-width: 280px;
+}
+
+/* Login Box with Liquid Glass Effect */
+.login-box {
+    width: 100%;
+    max-width: 420px;
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.08) 0%, 
+        rgba(255, 255, 255, 0.04) 50%,
+        rgba(200, 230, 255, 0.1) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 50px 40px;
+    box-shadow: 
+        0 8px 32px rgba(0, 80, 150, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 -20px 40px -20px rgba(100, 180, 255, 0.2) inset;
+    animation: slideInUp 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Liquid glass cursor effect */
+.login-box::before {
+    content: '';
+    position: absolute;
+    top: var(--cursor-y, 50%);
+    left: var(--cursor-x, 50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, 
+        rgba(150, 200, 255, 0.15) 0%, 
+        rgba(100, 180, 255, 0.08) 30%,
+        transparent 70%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+/* Water ripple effect */
+.login-box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(ellipse at 20% 80%, rgba(100, 180, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(150, 200, 255, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    animation: liquidWaves 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes liquidWaves {
+    0%, 100% { 
+        transform: scale(1) translateY(0);
+        opacity: 0.8;
+    }
+    50% { 
+        transform: scale(1.02) translateY(-5px);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+/* Header */
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.login-header h1 {
+    color: #fff;
+    font-size: 32px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+}
+
+.login-header p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Login Form */
+.login-form {
+    position: relative;
+    z-index: 1;
+}
+
+.form-group {
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.form-group:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.form-group:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Input Wrapper */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+/* Liquid Glass Input Fields */
+.glossy-input {
+    width: 100%;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    box-shadow: 
+        0 2px 15px rgba(0, 80, 150, 0.08) inset,
+        0 -5px 15px -5px rgba(100, 180, 255, 0.15) inset,
+        0 4px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Water ripple effect on input */
+.glossy-input::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(150, 200, 255, 0.08) 50%, 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.glossy-input:hover::before {
+    left: 100%;
+}
+
+.glossy-input::placeholder {
+    color: rgba(200, 220, 255, 0.6);
+    font-weight: 400;
+}
+
+.glossy-input:focus {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.15) 0%, 
+        rgba(200, 230, 255, 0.1) 100%);
+    border: 1px solid rgba(150, 200, 255, 0.3);
+    box-shadow: 
+        0 2px 20px rgba(0, 100, 200, 0.15) inset,
+        0 -8px 20px -8px rgba(100, 180, 255, 0.25) inset,
+        0 8px 30px rgba(0, 80, 150, 0.2),
+        0 0 20px rgba(100, 180, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.glossy-input:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.12) 0%, 
+        rgba(255, 255, 255, 0.06) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 2px 15px rgba(0, 80, 150, 0.1) inset,
+        0 -5px 15px -5px rgba(100, 180, 255, 0.12) inset,
+        0 6px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Input Icon */
+.input-icon {
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.input-icon:hover {
+    transform: scale(1.2) rotate(10deg);
+}
+
+/* Input Line Animation */
+.input-line {
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+.form-group:focus-within .input-line {
+    transform: scaleX(1);
+}
+
+/* Remember & Forgot */
+.remember-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 13px;
+    animation: fadeInUp 0.8s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.checkbox-container:hover {
+    color: #fff;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.forgot-password {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.forgot-password::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: rgba(255, 255, 255, 0.8);
+    transition: width 0.3s ease;
+}
+
+.forgot-password:hover::after {
+    width: 100%;
+}
+
+.forgot-password:hover {
+    color: #fff;
+}
+
+/* Login Button with Liquid Glass Effect */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, 
+        rgba(80, 150, 220, 0.8) 0%, 
+        rgba(100, 180, 255, 0.6) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 25px rgba(0, 100, 200, 0.3),
+        0 0 30px rgba(100, 180, 255, 0.15) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-out 0.35s forwards;
+    opacity: 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.btn-text {
+    position: relative;
+    z-index: 2;
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 8px 30px rgba(102, 126, 234, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 15px rgba(102, 126, 234, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+    animation: fadeInUp 0.8s ease-out 0.4s forwards;
+    opacity: 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+}
+
+.divider span {
+    padding: 0 15px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Sign Up Button with Liquid Glass Effect */
+.signup-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.8s ease-out 0.45s forwards;
+    opacity: 0;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 20px rgba(0, 80, 150, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.signup-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.signup-btn:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.signup-btn:hover::before {
+    left: 100%;
+}
+
+.signup-btn:active {
+    transform: translateY(0);
+}
+
+/* Footer */
+.login-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    animation: fadeInUp 0.8s ease-out 0.5s forwards;
+    opacity: 0;
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 300px;
+    z-index: 1000;
+    border-left: 4px solid #667eea;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.success {
+    border-left-color: #4caf50;
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.notification.error {
+    border-left-color: #f44336;
+    background: rgba(244, 67, 54, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1000px) {
+    .login-wrapper {
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .illustration-section {
+        flex: 1;
+        min-width: 250px;
+    }
+    
+    .login-box {
+        flex: 1;
+        min-width: 250px;
+        padding: 40px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-wrapper {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .illustration-section {
+        width: 100%;
+        order: 2;
+    }
+    
+    .login-box {
+        width: 100%;
+        order: 1;
+        max-width: 100%;
+        padding: 40px 25px;
+    }
+
+    .login-header h1 {
+        font-size: 28px;
+    }
+
+    .glossy-input {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .login-btn,
+    .signup-btn {
+        padding: 12px;
+        font-size: 15px;
+    }
+    
+    .illustration-text h2 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-box {
+        padding: 35px 20px;
+    }
+
+    .illustration-section {
+        display: none;
+    }
+}
+
+/* Animation for input focus */
+@keyframes inputGlow {
+    0% {
+        box-shadow: 
+            inset 0 2px 5px rgba(255, 255, 255, 0.3),
+            inset 0 -2px 5px rgba(0, 0, 0, 0.1),
+            0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 
+            inset 0 2px 8px rgba(255, 255, 255, 0.4),
+            inset 0 -2px 8px rgba(0, 0, 0, 0.15),
+            0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+    100% {
+        box-shadow: 
+            inset 0 2px 8px rgba(255, 255, 255, 0.4),
+            inset 0 -2px 8px rgba(0, 0, 0, 0.15),
+            0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+}

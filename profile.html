@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile</title>
+<style>
+:root{
+  --line:#e4e4e4;
+  --panel:#ffffff;
+  --text:#232323;
+  --muted:#666;
+  --accent:#2f8f46;
+  --accent-soft:#e9f6ec;
+  --danger:#973737;
+  --bg-soft:#f6f8fb;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(83,154,224,.32), transparent 30%),
+    radial-gradient(circle at 86% 18%, rgba(255,199,118,.22), transparent 22%),
+    radial-gradient(circle at 76% 80%, rgba(98,189,147,.2), transparent 24%),
+    linear-gradient(145deg, rgba(255,255,255,.12) 0 12%, transparent 12% 24%, rgba(255,255,255,.08) 24% 36%, transparent 36% 48%),
+    linear-gradient(160deg,#e7eef9 0%,#f5eee7 46%,#e4f3eb 100%);
+  min-height:100vh;
+  padding:22px;
+  display:flex;
+}
+.frame{
+  width:min(1280px,100%);
+  margin:0 auto;
+  background:rgba(255,255,255,.94);
+  border:1px solid #ddd;
+  border-radius:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.12);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:230px 1fr;
+  min-height:calc(100vh - 44px);
+}
+.sidebar{
+  background:linear-gradient(180deg,#f0f0f0,#ebebeb);
+  border-right:1px solid var(--line);
+  padding:20px 14px;
+}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{
+  padding:18px;
+  display:grid;
+  grid-template-rows:auto auto 1fr;
+  gap:10px;
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));
+  min-width:0;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.crumb{font-size:12px;color:#7f7f7f;margin-bottom:4px}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:var(--muted)}
+.btn{
+  border:none;
+  border-radius:8px;
+  background:#202020;
+  color:#fff;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:13px;
+}
+.btn:hover{background:#111}
+.btn.alt{background:#f1f1f1;color:#222;border:1px solid #d8d8d8}
+.btn.alt:hover{background:#e8e8e8}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+}
+.k{font-size:11px;color:#787878}
+.v{font-size:24px;font-weight:700;margin-top:4px}
+.hint{font-size:12px;color:var(--muted);margin-top:4px}
+.layout{
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:10px;
+  min-height:0;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+}
+.panel h3{
+  margin:0 0 10px;
+  font-size:17px;
+}
+.profile-card{
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  --profile-glow:rgba(255,255,255,.14);
+  --avatar-shell:rgba(255,255,255,.12);
+  --avatar-ring:rgba(255,255,255,.18);
+}
+.profile-card.male-theme{
+  background:linear-gradient(180deg,#3a5f86 0%,#5b8fb8 100%);
+  --profile-glow:rgba(210,229,255,.16);
+  --avatar-shell:rgba(225,238,252,.14);
+  --avatar-ring:rgba(225,238,252,.22);
+}
+.profile-card.female-theme{
+  background:linear-gradient(180deg,#9a5f7d 0%,#c987a3 100%);
+  --profile-glow:rgba(255,231,240,.16);
+  --avatar-shell:rgba(255,238,244,.14);
+  --avatar-ring:rgba(255,238,244,.22);
+}
+.profile-card::before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  top:-60px;
+  right:-40px;
+  background:var(--profile-glow);
+}
+.profile-head{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:10px;
+}
+.avatar{
+  width:92px;
+  height:92px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px;
+  background:var(--avatar-shell);
+  border:1px solid var(--avatar-ring);
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.avatar img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center top;
+  border-radius:50%;
+}
+.profile-name{font-size:24px;font-weight:700;line-height:1.2}
+.profile-id{font-size:13px;color:rgba(255,255,255,.86)}
+.tag-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  padding:5px 10px;
+  font-size:11px;
+  font-weight:700;
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.18);
+}
+.profile-sections{
+  position:relative;
+  margin-top:18px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.profile-group{
+  border-top:1px solid rgba(255,255,255,.18);
+  padding-top:14px;
+}
+.profile-line{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  font-size:13px;
+  margin-top:8px;
+}
+.profile-line span:last-child{
+  text-align:right;
+  font-weight:700;
+}
+.small-note{
+  position:relative;
+  margin-top:16px;
+  font-size:12px;
+  color:rgba(255,255,255,.82);
+}
+.right-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.stats-list,.activity-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.activity-panel{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.activity-list{
+  max-height:236px;
+  overflow-y:auto;
+  padding-right:4px;
+}
+.stat-row,.activity-item{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--bg-soft);
+  padding:10px;
+}
+.label{font-size:11px;color:#7a7a7a;text-transform:uppercase;letter-spacing:.5px}
+.value{font-size:15px;font-weight:700;margin-top:4px}
+.value.soft{font-weight:600;color:#2d2d2d}
+.inline-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  padding:4px 9px;
+  font-size:11px;
+  font-weight:700;
+}
+.pill.ok{background:var(--accent-soft);color:#226737}
+.pill.warn{background:#fde8e8;color:var(--danger)}
+.activity-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  background:#fff;
+}
+.activity-copy{min-width:0}
+.activity-title{font-size:14px;font-weight:700}
+.activity-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.empty{font-size:12px;color:var(--muted)}
+.wide{grid-column:1 / -1}
+.info-box{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  background:#fff;
+}
+.info-box .value{
+  font-size:14px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.55);
+  padding:18px;
+  z-index:9999;
+}
+.modal.open{display:flex}
+.modal-shell{
+  width:min(760px,100%);
+  background:#fff;
+  border-radius:14px;
+  border:1px solid var(--line);
+  box-shadow:0 22px 56px rgba(0,0,0,.26);
+  overflow:hidden;
+}
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+}
+.modal-head h3{margin:0;font-size:18px}
+.form{
+  padding:16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.field.full{grid-column:1 / -1}
+.field label{
+  font-size:12px;
+  color:#5f5f5f;
+  font-weight:700;
+}
+.field input,.field textarea{
+  width:100%;
+  border:1px solid #d8d8d8;
+  border-radius:10px;
+  padding:11px 12px;
+  font-size:13px;
+  font-family:inherit;
+  background:#fff;
+}
+.field textarea{
+  resize:vertical;
+  min-height:96px;
+}
+.form-note{
+  grid-column:1 / -1;
+  font-size:12px;
+  color:var(--muted);
+  background:#f8f8f8;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 12px;
+}
+.form-actions{
+  grid-column:1 / -1;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+}
+.toast{
+  margin-top:8px;
+  font-size:12px;
+  color:var(--accent);
+  font-weight:700;
+}
+@media (max-width:1100px){
+  .frame{grid-template-columns:1fr}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .layout{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .cards,.right-grid,.inline-grid,.form{grid-template-columns:1fr}
+  .title{font-size:26px}
+  .profile-line{flex-direction:column}
+  .profile-line span:last-child{text-align:left}
+  .activity-list{max-height:236px}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="borrowed.html">Borrowed Books</a>
+      <a href="textbooks.html">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a href="reading-history.html">Reading History</a>
+      <a href="fines-dues.html">Fine & Dues</a>
+      <a href="year-resources.html">Year Resources</a>
+      <a href="announcements.html">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a class="active" href="#">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="top">
+      <div>
+        <div class="crumb">Library Portal / Account</div>
+        <h1 class="title">Student Profile</h1>
+        <div class="sub" id="who">Loading profile...</div>
+      </div>
+      <div>
+        <button class="btn" id="editProfileBtn">Edit Profile</button>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="k">Time Spent on Portal</div>
+        <div class="v" id="spentPortal">0h 0m 0s</div>
+        <div class="hint">Tracked across dashboard and resource pages.</div>
+      </div>
+      <div class="card">
+        <div class="k">Active Borrowed Books</div>
+        <div class="v" id="activeBorrowCount">0</div>
+        <div class="hint" id="nearestDeadlineHint">No active issue right now.</div>
+      </div>
+      <div class="card">
+        <div class="k">Reading History Items</div>
+        <div class="v" id="readingHistoryCount">0</div>
+        <div class="hint">Books, magazines, or year resources opened by this account.</div>
+      </div>
+      <div class="card">
+        <div class="k">Current Fine Amount</div>
+        <div class="v" id="fineAmount">Rs 0</div>
+        <div class="hint">Keep this at zero for uninterrupted access.</div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="panel profile-card">
+        <div class="profile-head">
+          <div class="avatar" id="avatarInitials"><img id="profileAvatarImage" src="Profile Pictures/male.png" alt="Profile avatar"></div>
+          <div class="profile-name" id="profileName">Student Name</div>
+          <div class="profile-id" id="profileReg">Registration No</div>
+          <div class="tag-row">
+            <span class="tag" id="profileBranch">Branch</span>
+            <span class="tag" id="profileYear">Year</span>
+            <span class="tag" id="profileSemester">Semester</span>
+          </div>
+        </div>
+
+        <div class="profile-sections">
+          <div class="profile-group">
+            <div class="profile-line"><span>Email</span><span id="profileEmail">Not added</span></div>
+            <div class="profile-line"><span>Phone</span><span id="profilePhone">Not added</span></div>
+            <div class="profile-line"><span>Address</span><span id="profileAddress">Not added</span></div>
+          </div>
+
+          <div class="profile-group">
+            <div class="profile-line"><span>Study Goal</span><span id="profileGoal">Build a strong library habit.</span></div>
+            <div class="profile-line"><span>Preferred Track</span><span id="profileTrack">Core subjects and placements</span></div>
+            <div class="profile-line"><span>About</span><span id="profileAbout">Library member profile is ready to personalize.</span></div>
+          </div>
+        </div>
+
+        <div class="small-note">Profile extras are saved on this device for this student account.</div>
+      </section>
+
+      <section class="right-grid">
+        <section class="panel">
+          <h3>Academic Snapshot</h3>
+          <div class="inline-grid">
+            <div class="info-box"><div class="label">Full Name</div><div class="value" id="academicName">-</div></div>
+            <div class="info-box"><div class="label">Registration Number</div><div class="value" id="academicReg">-</div></div>
+            <div class="info-box"><div class="label">Branch</div><div class="value" id="academicBranch">-</div></div>
+            <div class="info-box"><div class="label">Academic Year</div><div class="value" id="academicYear">-</div></div>
+            <div class="info-box"><div class="label">Semester</div><div class="value" id="academicSemester">-</div></div>
+            <div class="info-box"><div class="label">Suggested Focus</div><div class="value soft" id="academicFocus">-</div></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Library Summary</h3>
+          <div class="stats-list">
+            <div class="stat-row"><div class="label">Books Currently Borrowed</div><div class="value" id="libBorrowed">0</div></div>
+            <div class="stat-row"><div class="label">Recently Returned</div><div class="value" id="libReturned">0</div></div>
+            <div class="stat-row"><div class="label">Nearest Deadline</div><div class="value soft" id="libDeadline">-</div></div>
+            <div class="stat-row"><div class="label">Account Standing</div><div class="value"><span class="pill ok" id="accountStanding">Active</span></div></div>
+          </div>
+        </section>
+
+        <section class="panel wide activity-panel">
+          <h3>Current Library Activity</h3>
+          <div class="activity-list" id="activityList"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="profileModal" role="dialog" aria-modal="true">
+  <div class="modal-shell">
+    <div class="modal-head">
+      <h3>Edit Profile</h3>
+      <button class="btn alt" id="closeModalBtn">Close</button>
+    </div>
+    <form class="form" id="profileForm">
+      <div class="form-note">Academic and library fields come from your account data. The details below are personal profile extras stored for this device and student login.</div>
+      <div class="field">
+        <label for="emailInput">Email</label>
+        <input id="emailInput" type="email" placeholder="student@college.edu">
+      </div>
+      <div class="field">
+        <label for="phoneInput">Phone</label>
+        <input id="phoneInput" type="text" placeholder="+91 98765 43210">
+      </div>
+      <div class="field full">
+        <label for="addressInput">Address</label>
+        <input id="addressInput" type="text" placeholder="Hostel, city or current address">
+      </div>
+      <div class="field">
+        <label for="goalInput">Study Goal</label>
+        <input id="goalInput" type="text" placeholder="Example: Improve DSA and OS concepts">
+      </div>
+      <div class="field">
+        <label for="trackInput">Preferred Track</label>
+        <input id="trackInput" type="text" placeholder="Example: Core subjects, web dev, placements">
+      </div>
+      <div class="field full">
+        <label for="aboutInput">About</label>
+        <textarea id="aboutInput" placeholder="Add a short note about your learning focus."></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn alt" id="cancelEditBtn">Cancel</button>
+        <button type="submit" class="btn">Save Profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+const raw = sessionStorage.getItem("libraryUser")
+if(!raw){ window.location.href = "index.html" }
+let currentUser = null
+try{ currentUser = JSON.parse(raw) } catch { window.location.href = "index.html" }
+if(!currentUser || !currentUser.registrationNo){ window.location.href = "index.html" }
+
+const pendingSecondsKey = `pending_seconds_${currentUser.registrationNo}`
+const historyKey = `reading_history_${currentUser.registrationNo}`
+const profileKey = `profile_details_${currentUser.registrationNo}`
+let unsyncedSeconds = 0
+let baseSpentSeconds = 0
+let trackTicker = null
+let trackSyncTimer = null
+let refreshTimer = null
+let trackSyncInFlight = false
+let lastTickMs = Date.now()
+let tickRemainderMs = 0
+
+function getServerSpentSeconds(user){
+  const direct = Number(user?.spentSeconds)
+  if(Number.isFinite(direct) && direct >= 0){ return Math.round(direct) }
+  return Math.round((Number(user?.spentHours) || 0) * 3600)
+}
+
+function formatTimeSpent(totalSeconds){
+  const sec = Math.max(0, Math.round(totalSeconds))
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  const s = sec % 60
+  return `${h}h ${m}m ${s}s`
+}
+
+function normalizeAcademicInfo(user){
+  const rawYear = Number(user?.academicYear)
+  const rawSemester = Number(user?.semester)
+  let year = Number.isFinite(rawYear) && rawYear > 0 ? Math.round(rawYear) : 1
+  let semester = 1
+  if(Number.isFinite(rawSemester) && rawSemester > 0){
+    semester = Math.round(rawSemester) === 2 ? 2 : 1
+  }
+  year = Math.max(1, Math.min(4, year))
+  return { year, semester }
+}
+
+function getProfileExtras(){
+  try{
+    const data = JSON.parse(localStorage.getItem(profileKey) || "{}")
+    return {
+      email: String(data.email || "").trim(),
+      phone: String(data.phone || "").trim(),
+      address: String(data.address || "").trim(),
+      goal: String(data.goal || "").trim() || "Build a strong library habit.",
+      track: String(data.track || "").trim() || "Core subjects and placements",
+      about: String(data.about || "").trim() || "Library member profile is ready to personalize."
+    }
+  } catch {
+    return {
+      email:"",
+      phone:"",
+      address:"",
+      goal:"Build a strong library habit.",
+      track:"Core subjects and placements",
+      about:"Library member profile is ready to personalize."
+    }
+  }
+}
+
+function saveProfileExtras(data){
+  localStorage.setItem(profileKey, JSON.stringify(data))
+}
+
+function getReadingHistory(){
+  try{
+    const items = JSON.parse(localStorage.getItem(historyKey) || "[]")
+    return Array.isArray(items) ? items : []
+  } catch {
+    return []
+  }
+}
+
+function loadPendingSeconds(){
+  const rawPending = sessionStorage.getItem(pendingSecondsKey)
+  const value = Number(rawPending)
+  if(Number.isFinite(value) && value > 0){ return Math.round(value) }
+  return 0
+}
+
+function persistPendingSeconds(){
+  const safe = Math.max(0, Math.round(unsyncedSeconds))
+  if(safe === 0){
+    sessionStorage.removeItem(pendingSecondsKey)
+    return
+  }
+  sessionStorage.setItem(pendingSecondsKey, String(safe))
+}
+
+function updateSessionUserSpent(secondsDelta){
+  if(!Number.isFinite(secondsDelta) || secondsDelta <= 0){ return }
+  const prevSeconds = getServerSpentSeconds(currentUser)
+  const nextSeconds = prevSeconds + Math.round(secondsDelta)
+  currentUser.spentSeconds = nextSeconds
+  currentUser.spentHours = nextSeconds / 3600
+  sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+}
+
+function renderLiveSpent(){
+  document.getElementById("spentPortal").innerText = formatTimeSpent(baseSpentSeconds + unsyncedSeconds)
+}
+
+function getInitials(name){
+  const parts = String(name || "Library Portal").trim().split(/\s+/).filter(Boolean).slice(0, 2)
+  return parts.map(part => part[0]).join("").toUpperCase() || "LP"
+}
+
+function getGenderTheme(user){
+  const gender = String(user?.gender || "").trim().toLowerCase()
+  return gender === "female" ? "female" : "male"
+}
+
+function getAcademicFocus(user){
+  const branch = String(user?.btechBranch || "").toUpperCase()
+  const year = normalizeAcademicInfo(user).year
+  if(branch === "CSE" && year === 1){ return "Programming basics, math, and communication skills" }
+  if(branch === "CSE" && year === 2){ return "DSA, DBMS, Java, and digital logic" }
+  if(branch === "CSE" && year === 3){ return "OS, CN, algorithms, and system subjects" }
+  if(branch === "CSE" && year === 4){ return "Placements, projects, cloud, and advanced electives" }
+  if(year === 1){ return "First-year engineering fundamentals and communication" }
+  if(year === 2){ return "Core branch subjects and coding practice" }
+  if(year === 3){ return "Advanced academics, labs, and practical systems work" }
+  return "Projects, revision, and placement preparation"
+}
+
+function getAccountStanding(user){
+  const fine = Number(user?.fineAmount) || 0
+  const active = Array.isArray(user?.activeBorrowedBooks) ? user.activeBorrowedBooks : []
+  const overdue = active.some(item => String(item?.status || "").toLowerCase() === "overdue")
+  if(overdue || fine > 0){
+    return { text:"Needs Attention", className:"pill warn" }
+  }
+  return { text:"Active", className:"pill ok" }
+}
+
+function formatDateTime(value){
+  const dt = new Date(value)
+  if(Number.isNaN(dt.getTime())){ return "-" }
+  return dt.toLocaleString("en-IN", { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" })
+}
+
+function renderActivity(user){
+  const active = Array.isArray(user?.activeBorrowedBooks) ? user.activeBorrowedBooks : []
+  const returned = Array.isArray(user?.returnedBorrowedBooks) ? user.returnedBorrowedBooks : []
+  const history = getReadingHistory().slice(0, 3)
+  const items = []
+
+  active.slice(0, 3).forEach(book => {
+    items.push({
+      title: book.bookTitle || "Borrowed Book",
+      meta: `Due: ${book.dueDate || "-"} | Status: ${book.status || "Active"}`,
+      pillText: String(book.status || "").toLowerCase() === "overdue" ? "Overdue" : "Borrowed",
+      pillClass: String(book.status || "").toLowerCase() === "overdue" ? "pill warn" : "pill ok"
+    })
+  })
+
+  returned.slice(0, 2).forEach(book => {
+    items.push({
+      title: book.bookTitle || "Returned Book",
+      meta: `Returned: ${book.returnedAt || "-"} | Borrowed: ${book.borrowedAt || "-"}`,
+      pillText: "Returned",
+      pillClass: "pill ok"
+    })
+  })
+
+  history.forEach(item => {
+    items.push({
+      title: item.title || "Reading Activity",
+      meta: `Opened from ${item.source || "Library"} on ${formatDateTime(item.openedAt)}`,
+      pillText: "Read",
+      pillClass: "pill ok"
+    })
+  })
+
+  const root = document.getElementById("activityList")
+  if(items.length === 0){
+    root.innerHTML = '<div class="empty">No recent profile activity yet. Borrow books or open textbooks, magazines, or year resources to see updates here.</div>'
+    return
+  }
+
+  root.innerHTML = items.map(item => `
+    <article class="activity-item">
+      <div class="activity-copy">
+        <div class="activity-title">${item.title}</div>
+        <div class="activity-meta">${item.meta}</div>
+      </div>
+      <span class="${item.pillClass}">${item.pillText}</span>
+    </article>
+  `).join("")
+}
+
+function renderProfile(user){
+  currentUser = user
+  baseSpentSeconds = getServerSpentSeconds(user)
+  sessionStorage.setItem("libraryUser", JSON.stringify(user))
+
+  const extras = getProfileExtras()
+  const normalized = normalizeAcademicInfo(user)
+  const active = Array.isArray(user.activeBorrowedBooks) ? user.activeBorrowedBooks : []
+  const returned = Array.isArray(user.returnedBorrowedBooks) ? user.returnedBorrowedBooks : []
+  const fine = Number(user.fineAmount) || 0
+  const nearest = user.nearestDeadline || (active[0]?.dueDate || "-")
+  const standing = getAccountStanding(user)
+  const readingCount = getReadingHistory().length
+  const focus = getAcademicFocus(user)
+  const genderTheme = getGenderTheme(user)
+  const profileCard = document.querySelector(".profile-card")
+
+  document.getElementById("who").innerText = `${user.fullName} (${user.registrationNo}) | ${user.btechBranch} | Year ${normalized.year} | Sem ${normalized.semester}`
+  profileCard.classList.remove("male-theme", "female-theme")
+  profileCard.classList.add(`${genderTheme}-theme`)
+  document.getElementById("profileAvatarImage").src = genderTheme === "female" ? "Profile Pictures/female.png" : "Profile Pictures/male.png"
+  document.getElementById("profileAvatarImage").alt = `${genderTheme === "female" ? "Female" : "Male"} profile avatar`
+  document.getElementById("profileName").innerText = user.fullName
+  document.getElementById("profileReg").innerText = user.registrationNo
+  document.getElementById("profileBranch").innerText = user.btechBranch
+  document.getElementById("profileYear").innerText = `BTech Year ${normalized.year}`
+  document.getElementById("profileSemester").innerText = `Semester ${normalized.semester}`
+
+  document.getElementById("profileEmail").innerText = extras.email || "Not added"
+  document.getElementById("profilePhone").innerText = extras.phone || "Not added"
+  document.getElementById("profileAddress").innerText = extras.address || "Not added"
+  document.getElementById("profileGoal").innerText = extras.goal
+  document.getElementById("profileTrack").innerText = extras.track
+  document.getElementById("profileAbout").innerText = extras.about
+
+  document.getElementById("academicName").innerText = user.fullName
+  document.getElementById("academicReg").innerText = user.registrationNo
+  document.getElementById("academicBranch").innerText = user.btechBranch
+  document.getElementById("academicYear").innerText = `BTech Year ${normalized.year}`
+  document.getElementById("academicSemester").innerText = `Semester ${normalized.semester}`
+  document.getElementById("academicFocus").innerText = focus
+
+  document.getElementById("activeBorrowCount").innerText = active.length
+  document.getElementById("readingHistoryCount").innerText = readingCount
+  document.getElementById("fineAmount").innerText = `Rs ${fine}`
+  document.getElementById("nearestDeadlineHint").innerText = nearest !== "-" ? `Nearest deadline: ${nearest}` : "No active issue right now."
+  document.getElementById("libBorrowed").innerText = active.length
+  document.getElementById("libReturned").innerText = returned.length
+  document.getElementById("libDeadline").innerText = nearest
+  document.getElementById("accountStanding").innerText = standing.text
+  document.getElementById("accountStanding").className = standing.className
+
+  renderLiveSpent()
+  renderActivity(user)
+}
+
+function populateForm(){
+  const extras = getProfileExtras()
+  document.getElementById("emailInput").value = extras.email
+  document.getElementById("phoneInput").value = extras.phone
+  document.getElementById("addressInput").value = extras.address
+  document.getElementById("goalInput").value = extras.goal
+  document.getElementById("trackInput").value = extras.track
+  document.getElementById("aboutInput").value = extras.about
+}
+
+function showSaveToast(message){
+  const el = document.getElementById("saveToast")
+  if(!el){ return }
+  el.innerText = message
+  window.clearTimeout(showSaveToast.timer)
+  showSaveToast.timer = window.setTimeout(() => {
+    el.innerText = ""
+  }, 2500)
+}
+
+function openModal(){
+  populateForm()
+  document.getElementById("profileModal").classList.add("open")
+}
+
+function closeModal(){
+  document.getElementById("profileModal").classList.remove("open")
+}
+
+async function fetchProfile(){
+  try{
+    const res = await fetch(`${API_BASE}/dashboard/${encodeURIComponent(currentUser.registrationNo)}`)
+    const data = await res.json().catch(() => ({}))
+    if(res.ok && data.user){ renderProfile(data.user) }
+  } catch {}
+}
+
+function applyElapsedMs(elapsedMs){
+  if(!Number.isFinite(elapsedMs) || elapsedMs <= 0){ return }
+  tickRemainderMs += elapsedMs
+  const wholeSeconds = Math.floor(tickRemainderMs / 1000)
+  if(wholeSeconds <= 0){ return }
+  tickRemainderMs -= wholeSeconds * 1000
+  unsyncedSeconds += wholeSeconds
+  persistPendingSeconds()
+  renderLiveSpent()
+}
+
+function captureElapsedNow(){
+  const now = Date.now()
+  const elapsed = now - lastTickMs
+  lastTickMs = now
+  applyElapsedMs(elapsed)
+}
+
+async function syncTrackedTime(keepaliveMode = false){
+  captureElapsedNow()
+  if(unsyncedSeconds <= 0){ return }
+  if(trackSyncInFlight){ return }
+  trackSyncInFlight = true
+  const secondsToSync = unsyncedSeconds
+  try{
+    const response = await fetch(`${API_BASE}/track-time`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: keepaliveMode,
+      body: JSON.stringify({ registrationNo: currentUser.registrationNo, secondsSpent: secondsToSync })
+    })
+    if(!response.ok){ throw new Error("time-sync failed") }
+    baseSpentSeconds += secondsToSync
+    unsyncedSeconds -= secondsToSync
+    if(unsyncedSeconds < 0){ unsyncedSeconds = 0 }
+    updateSessionUserSpent(secondsToSync)
+    persistPendingSeconds()
+    renderLiveSpent()
+    if(!keepaliveMode){ fetchProfile() }
+  } catch {
+    unsyncedSeconds = Math.max(unsyncedSeconds, secondsToSync)
+    persistPendingSeconds()
+  } finally {
+    trackSyncInFlight = false
+  }
+}
+
+function flushUnsyncedToSession(){
+  captureElapsedNow()
+  persistPendingSeconds()
+}
+
+function startRealtimeTracking(){
+  lastTickMs = Date.now()
+  tickRemainderMs = 0
+  trackTicker = setInterval(captureElapsedNow, 1000)
+  trackSyncTimer = setInterval(syncTrackedTime, 15000)
+  refreshTimer = setInterval(fetchProfile, 20000)
+}
+
+function stopRealtimeTracking(){
+  captureElapsedNow()
+  persistPendingSeconds()
+  if(trackTicker){ clearInterval(trackTicker) }
+  if(trackSyncTimer){ clearInterval(trackSyncTimer) }
+  if(refreshTimer){ clearInterval(refreshTimer) }
+}
+
+async function logout(event){
+  if(event){ event.preventDefault() }
+  stopRealtimeTracking()
+  await syncTrackedTime(true)
+  sessionStorage.removeItem("libraryUser")
+  sessionStorage.removeItem("libraryLoginMessage")
+  window.location.href = "index.html"
+}
+
+document.getElementById("editProfileBtn").addEventListener("click", openModal)
+document.getElementById("closeModalBtn").addEventListener("click", closeModal)
+document.getElementById("cancelEditBtn").addEventListener("click", closeModal)
+document.getElementById("profileModal").addEventListener("click", event => {
+  if(event.target.id === "profileModal"){ closeModal() }
+})
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape"){ closeModal() }
+})
+
+document.getElementById("profileForm").addEventListener("submit", event => {
+  event.preventDefault()
+  const next = {
+    email: document.getElementById("emailInput").value.trim(),
+    phone: document.getElementById("phoneInput").value.trim(),
+    address: document.getElementById("addressInput").value.trim(),
+    goal: document.getElementById("goalInput").value.trim() || "Build a strong library habit.",
+    track: document.getElementById("trackInput").value.trim() || "Core subjects and placements",
+    about: document.getElementById("aboutInput").value.trim() || "Library member profile is ready to personalize."
+  }
+  saveProfileExtras(next)
+  renderProfile(currentUser)
+  closeModal()
+  showSaveToast("Profile details saved for this account on this device.")
+})
+
+window.addEventListener("pagehide", flushUnsyncedToSession)
+window.addEventListener("beforeunload", flushUnsyncedToSession)
+window.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){ flushUnsyncedToSession() }
+})
+
+document.querySelectorAll('.menu a[href]').forEach(link => {
+  link.addEventListener("click", async event => {
+    const href = link.getAttribute("href")
+    if(!href || href === "#" || href.toLowerCase().startsWith("javascript:")){ return }
+    event.preventDefault()
+    stopRealtimeTracking()
+    await syncTrackedTime(true)
+    flushUnsyncedToSession()
+    window.location.href = href
+  })
+})
+
+unsyncedSeconds = loadPendingSeconds()
+baseSpentSeconds = getServerSpentSeconds(currentUser)
+renderProfile(currentUser)
+startRealtimeTracking()
+fetchProfile()
+</script>
+</body>
+</html>

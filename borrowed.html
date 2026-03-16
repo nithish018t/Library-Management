@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borrowed Books</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 14% 18%, rgba(76,145,201,.34), transparent 30%),radial-gradient(circle at 82% 20%, rgba(255,196,112,.26), transparent 24%),radial-gradient(circle at 78% 82%, rgba(88,171,124,.24), transparent 26%),repeating-linear-gradient(135deg, rgba(255,255,255,.14) 0 14px, rgba(255,255,255,0) 14px 28px),linear-gradient(155deg,#e6eef8 0%,#f7efe2 44%,#e3f0e5 100%);min-height:100vh;padding:22px;display:flex}
+.frame{width:min(1280px,100%);margin:0 auto;background:rgba(255,255,255,.94);border:1px solid #ddd;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.12);overflow:hidden;display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 44px)}
+.sidebar{background:linear-gradient(180deg,#f0f0f0,#ebebeb);border-right:1px solid #e4e4e4;padding:20px 14px}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:#666}
+.btn{border:none;border-radius:8px;background:#2b2b2b;color:#fff;padding:9px 12px;cursor:pointer}
+.btn:hover{background:#151515}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.card{background:#fff;border:1px solid #e4e4e4;border-radius:10px;padding:10px}
+.k{font-size:11px;color:#787}
+.v{font-size:26px;font-weight:700}
+.panel{background:#fff;border:1px solid #e4e4e4;border-radius:10px;padding:12px}
+.panel h3{margin:0 0 8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scanner-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;margin-top:10px}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{border:1px solid #e4e4e4;border-radius:8px;padding:8px;background:#fff}
+.mini{font-size:12px;color:#666}
+.status{display:inline-block;font-size:10px;padding:2px 6px;border-radius:999px;margin-top:4px}
+.ok{background:#e8f6ec;color:#1f6c36}
+.warn{background:#fde8e8;color:#973737}
+.scan-video{width:100%;height:220px;border-radius:8px;background:#111;object-fit:cover;border:1px solid #ddd}
+.scan-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.scan-actions .btn{padding:8px 10px;font-size:12px}
+.manual-row{display:flex;gap:8px;margin-top:8px}
+.manual-row input{flex:1;padding:8px;border:1px solid #d8d8d8;border-radius:8px}
+.upload-row{display:flex;gap:8px;margin-top:8px}
+.upload-row input{flex:1;padding:8px;border:1px solid #d8d8d8;border-radius:8px;background:#fff}
+.details-box{border:1px solid #e4e4e4;border-radius:8px;padding:10px;background:#fafafa}
+.details-box .line{font-size:12px;margin:5px 0;color:#333}
+.status-chip{display:inline-block;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.status-chip.borrow{background:#e8f6ec;color:#1f6c36}
+.status-chip.return{background:#e8edff;color:#2249a6}
+.status-chip.block{background:#fde8e8;color:#973737}
+@media (max-width:1000px){.frame{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.scanner-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a class="active" href="#">Borrowed Books</a>
+      <a href="textbooks.html">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a href="reading-history.html">Reading History</a>
+      <a href="fines-dues.html">Fine & Dues</a>
+      <a href="year-resources.html">Year Resources</a>
+      <a href="announcements.html">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+  <main class="content">
+    <div class="top">
+      <div>
+        <h1 class="title">Borrowed Books</h1>
+        <div class="sub" id="who"></div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="k">Time Spent on Portal</div><div class="v" id="spentPortal">0h 0m 0s</div></div>
+      <div class="card"><div class="k">Active Borrowed</div><div class="v" id="activeCount">0</div></div>
+      <div class="card"><div class="k">Returned (Recent)</div><div class="v" id="returnedCount">0</div></div>
+      <div class="card"><div class="k">Overdue</div><div class="v" id="overdueCount">0</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>Borrow Summary</h3>
+      <div class="mini" id="summaryLine"></div>
+    </div>
+
+    <div class="scanner-grid">
+      <section class="panel">
+        <h3>Scan Barcode (Borrow / Return)</h3>
+        <div class="mini" id="scanStatus">Ready to scan. Use camera or manual barcode entry.</div>
+        <video id="scanVideo" class="scan-video" autoplay muted playsinline></video>
+        <div class="scan-actions">
+          <button class="btn" id="startScanBtn">Start Camera Scan</button>
+          <button class="btn" id="stopScanBtn">Stop Camera</button>
+          <button class="btn" id="captureDecodeBtn">Capture & Decode</button>
+        </div>
+        <div class="manual-row">
+          <input id="manualBarcode" placeholder="Enter barcode manually">
+          <button class="btn" id="scanLookupBtn">Lookup</button>
+        </div>
+        <div class="upload-row">
+          <input id="barcodeImageFile" type="file" accept="image/*">
+          <button class="btn" id="uploadDecodeBtn">Decode Uploaded Image</button>
+        </div>
+      </section>
+      <section class="panel">
+        <h3>Scanned Book Details</h3>
+        <div class="details-box" id="bookDetails">
+          <div class="line"><strong>Barcode:</strong> <span id="dBarcode">-</span></div>
+          <div class="line"><strong>Title:</strong> <span id="dTitle">-</span></div>
+          <div class="line"><strong>Author:</strong> <span id="dAuthor">-</span></div>
+          <div class="line"><strong>ISBN:</strong> <span id="dIsbn">-</span></div>
+          <div class="line"><strong>Publisher:</strong> <span id="dPublisher">-</span></div>
+          <div class="line"><strong>Shelf:</strong> <span id="dShelf">-</span></div>
+          <div class="line"><strong>Copies:</strong> <span id="dCopies">-</span></div>
+          <div class="line"><strong>Borrowed By You:</strong> <span id="dBorrowed">-</span></div>
+          <div class="line"><strong>Borrowed At:</strong> <span id="dBorrowedAt">-</span></div>
+          <div class="line"><strong>Due Date:</strong> <span id="dDueDate">-</span></div>
+          <div class="line"><strong>Suggested Action:</strong> <span id="dAction" class="status-chip block">-</span></div>
+        </div>
+        <div class="scan-actions">
+          <button class="btn" id="scanBorrowBtn">Borrow Book</button>
+          <button class="btn" id="scanReturnBtn">Return Book</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <section class="panel">
+        <h3>Currently Borrowed</h3>
+        <div class="list" id="activeList"></div>
+      </section>
+      <section class="panel">
+        <h3>Recently Returned</h3>
+        <div class="list" id="returnedList"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+const raw = sessionStorage.getItem("libraryUser")
+if(!raw){ window.location.href = "index.html" }
+let currentUser = null
+try{ currentUser = JSON.parse(raw) } catch { window.location.href = "index.html" }
+if(!currentUser || !currentUser.registrationNo){ window.location.href = "index.html" }
+
+const pendingSecondsKey = `pending_seconds_${currentUser.registrationNo}`
+let unsyncedSeconds = 0
+let baseSpentSeconds = 0
+let trackTicker = null
+let trackSyncTimer = null
+let trackSyncInFlight = false
+let lastTickMs = Date.now()
+let tickRemainderMs = 0
+
+let scannerStream = null
+let scannerActive = false
+let currentScannedBarcode = ""
+let lastDetectedValue = ""
+let lastDetectedAt = 0
+let scannerKeyBuffer = ""
+let scannerKeyStartedAt = 0
+let scannerKeyLastAt = 0
+let serverDecodeCanvas = null
+
+function getServerSpentSeconds(user){
+  const direct = Number(user?.spentSeconds)
+  if(Number.isFinite(direct) && direct >= 0){
+    return Math.round(direct)
+  }
+  return Math.round((Number(user?.spentHours) || 0) * 3600)
+}
+
+function formatTimeSpent(totalSeconds){
+  const sec = Math.max(0, Math.round(totalSeconds))
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  const s = sec % 60
+  return `${h}h ${m}m ${s}s`
+}
+
+function renderLiveSpent(){
+  const el = document.getElementById("spentPortal")
+  if(el){
+    el.innerText = formatTimeSpent(baseSpentSeconds + unsyncedSeconds)
+  }
+}
+
+function loadPendingSeconds(){
+  const rawPending = sessionStorage.getItem(pendingSecondsKey)
+  const value = Number(rawPending)
+  if(Number.isFinite(value) && value > 0){
+    return Math.round(value)
+  }
+  return 0
+}
+
+function persistPendingSeconds(){
+  const safe = Math.max(0, Math.round(unsyncedSeconds))
+  if(safe === 0){
+    sessionStorage.removeItem(pendingSecondsKey)
+    return
+  }
+  sessionStorage.setItem(pendingSecondsKey, String(safe))
+}
+
+function updateSessionUserSpent(secondsDelta){
+  if(!Number.isFinite(secondsDelta) || secondsDelta <= 0){
+    return
+  }
+  const prevSeconds = getServerSpentSeconds(currentUser)
+  const nextSeconds = prevSeconds + Math.round(secondsDelta)
+  currentUser.spentSeconds = nextSeconds
+  currentUser.spentHours = nextSeconds / 3600
+  sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+}
+
+function setScanStatus(message){
+  document.getElementById("scanStatus").innerText = message
+}
+
+function isEditableElement(el){
+  if(!el){ return false }
+  const tag = (el.tagName || "").toLowerCase()
+  return tag === "input" || tag === "textarea" || el.isContentEditable
+}
+
+function setActionChip(action){
+  const chip = document.getElementById("dAction")
+  chip.className = "status-chip block"
+  if(action === "BORROW"){ chip.className = "status-chip borrow" }
+  if(action === "RETURN"){ chip.className = "status-chip return" }
+  chip.innerText = action || "-"
+}
+
+function renderScannedBook(book){
+  document.getElementById("dBarcode").innerText = book?.barcode || "-"
+  document.getElementById("dTitle").innerText = book?.title || "-"
+  document.getElementById("dAuthor").innerText = book?.author || "-"
+  document.getElementById("dIsbn").innerText = book?.isbn || "-"
+  document.getElementById("dPublisher").innerText = book?.publisher || "-"
+  document.getElementById("dShelf").innerText = book?.shelfLocation || "-"
+  document.getElementById("dCopies").innerText = `${book?.availableCopies ?? "-"} / ${book?.totalCopies ?? "-"} available`
+  document.getElementById("dBorrowed").innerText = book?.borrowedByCurrentUser ? "Yes" : "No"
+  document.getElementById("dBorrowedAt").innerText = book?.borrowedAt || "-"
+  document.getElementById("dDueDate").innerText = book?.dueDate || "-"
+  setActionChip(book?.suggestedAction || "-")
+}
+
+function render(data){
+  currentUser = data
+  baseSpentSeconds = getServerSpentSeconds(data)
+  sessionStorage.setItem("libraryUser", JSON.stringify(data))
+  const normalized = normalizeAcademicInfo(data)
+  document.getElementById("who").innerText = `${data.fullName} (${data.registrationNo}) | ${data.btechBranch} | Year ${normalized.year} | Sem ${normalized.semester}`
+
+  const active = Array.isArray(data.activeBorrowedBooks) ? data.activeBorrowedBooks : []
+  const returned = Array.isArray(data.returnedBorrowedBooks) ? data.returnedBorrowedBooks : []
+  const overdue = active.filter(x => x.status === "Overdue").length
+
+  document.getElementById("activeCount").innerText = active.length
+  document.getElementById("returnedCount").innerText = returned.length
+  document.getElementById("overdueCount").innerText = overdue
+  renderLiveSpent()
+  document.getElementById("summaryLine").innerText = `Nearest deadline: ${data.nearestDeadline} | Fine: Rs ${data.fineAmount}`
+
+  const activeList = document.getElementById("activeList")
+  const returnedList = document.getElementById("returnedList")
+  activeList.innerHTML = ""
+  returnedList.innerHTML = ""
+
+  if(active.length === 0){ activeList.innerHTML = '<div class="mini">No active borrowed books.</div>' }
+  active.forEach(b => {
+    const cls = b.status === "Overdue" ? "warn" : "ok"
+    const row = document.createElement("div")
+    row.className = "item"
+    row.innerHTML = `<div><strong>${b.bookTitle}</strong></div><div class="mini">Barcode: ${b.bookBarcode || "-"}</div><div class="mini">Borrowed: ${b.borrowedAt}</div><div class="mini">Due: ${b.dueDate}</div><span class="status ${cls}">${b.status}</span>`
+    activeList.appendChild(row)
+  })
+
+  if(returned.length === 0){ returnedList.innerHTML = '<div class="mini">No returned books yet.</div>' }
+  returned.forEach(b => {
+    const row = document.createElement("div")
+    row.className = "item"
+    row.innerHTML = `<div><strong>${b.bookTitle}</strong></div><div class="mini">Barcode: ${b.bookBarcode || "-"}</div><div class="mini">Borrowed: ${b.borrowedAt}</div><div class="mini">Returned: ${b.returnedAt}</div><span class="status ok">${b.status}</span>`
+    returnedList.appendChild(row)
+  })
+}
+
+function normalizeAcademicInfo(user){
+  const rawYear = Number(user?.academicYear)
+  const rawSemester = Number(user?.semester)
+  let year = Number.isFinite(rawYear) && rawYear > 0 ? Math.round(rawYear) : 1
+  let semester = 1
+  if(Number.isFinite(rawSemester) && rawSemester > 0){
+    semester = Math.round(rawSemester) === 2 ? 2 : 1
+  }
+  year = Math.max(1, Math.min(4, year))
+  return { year, semester }
+}
+
+async function fetchBorrowed(){
+  const res = await fetch(`${API_BASE}/dashboard/${encodeURIComponent(currentUser.registrationNo)}`)
+  const data = await res.json().catch(() => ({}))
+  if(res.ok && data.user){ render(data.user) }
+}
+
+function applyElapsedMs(elapsedMs){
+  if(!Number.isFinite(elapsedMs) || elapsedMs <= 0){ return }
+  tickRemainderMs += elapsedMs
+  const wholeSeconds = Math.floor(tickRemainderMs / 1000)
+  if(wholeSeconds <= 0){ return }
+  tickRemainderMs -= wholeSeconds * 1000
+  unsyncedSeconds += wholeSeconds
+  persistPendingSeconds()
+  renderLiveSpent()
+}
+
+function captureElapsedNow(){
+  const now = Date.now()
+  const elapsed = now - lastTickMs
+  lastTickMs = now
+  applyElapsedMs(elapsed)
+}
+
+async function syncTrackedTime(keepaliveMode = false){
+  captureElapsedNow()
+  if(unsyncedSeconds <= 0){ return }
+  if(trackSyncInFlight){ return }
+  trackSyncInFlight = true
+  const secondsToSync = unsyncedSeconds
+  try{
+    const response = await fetch(`${API_BASE}/track-time`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: keepaliveMode,
+      body: JSON.stringify({
+        registrationNo: currentUser.registrationNo,
+        secondsSpent: secondsToSync
+      })
+    })
+    if(!response.ok){ throw new Error("time-sync failed") }
+    baseSpentSeconds += secondsToSync
+    unsyncedSeconds -= secondsToSync
+    if(unsyncedSeconds < 0){ unsyncedSeconds = 0 }
+    updateSessionUserSpent(secondsToSync)
+    persistPendingSeconds()
+    renderLiveSpent()
+    if(!keepaliveMode){ fetchBorrowed() }
+  } catch {
+    unsyncedSeconds = Math.max(unsyncedSeconds, secondsToSync)
+    persistPendingSeconds()
+  } finally {
+    trackSyncInFlight = false
+  }
+}
+
+function flushUnsyncedToSession(){
+  captureElapsedNow()
+  persistPendingSeconds()
+}
+
+function startRealtimeTracking(){
+  lastTickMs = Date.now()
+  tickRemainderMs = 0
+  trackTicker = setInterval(captureElapsedNow, 1000)
+  trackSyncTimer = setInterval(syncTrackedTime, 15000)
+}
+
+function stopRealtimeTracking(){
+  captureElapsedNow()
+  persistPendingSeconds()
+  if(trackTicker){ clearInterval(trackTicker) }
+  if(trackSyncTimer){ clearInterval(trackSyncTimer) }
+}
+
+async function lookupBarcode(barcodeRaw){
+  const barcode = (barcodeRaw || "").trim()
+  if(!barcode){
+    setScanStatus("Enter or scan a barcode first.")
+    return
+  }
+  currentScannedBarcode = barcode
+  document.getElementById("manualBarcode").value = barcode
+  setScanStatus(`Looking up barcode ${barcode}...`)
+  const response = await fetch(`${API_BASE}/books/barcode/${encodeURIComponent(barcode)}?registrationNo=${encodeURIComponent(currentUser.registrationNo)}`)
+  const data = await response.json().catch(() => ({}))
+  if(!response.ok || !data.book){
+    setScanStatus(data.message || "Book not found for scanned barcode.")
+    renderScannedBook(null)
+    return
+  }
+  renderScannedBook(data.book)
+  setScanStatus(`Scanned ${data.book.title}. Suggested action: ${data.book.suggestedAction}.`)
+}
+
+async function decodeBarcodeImageData(imageData){
+  const response = await fetch(`${API_BASE}/books/decode-image`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageData })
+  })
+  const data = await response.json().catch(() => ({}))
+  if(!response.ok || !data.barcode){
+    throw new Error(data.message || "No barcode detected.")
+  }
+  return String(data.barcode).trim()
+}
+
+async function captureAndDecodeFromVideo(){
+  const video = document.getElementById("scanVideo")
+  if(!video || video.readyState < 2 || video.videoWidth < 2 || video.videoHeight < 2){
+    setScanStatus("Camera frame not ready. Start camera first.")
+    return
+  }
+  if(!serverDecodeCanvas){
+    serverDecodeCanvas = document.createElement("canvas")
+  }
+  const baseW = Math.max(1000, Math.min(2000, video.videoWidth))
+  const baseH = Math.round((baseW / video.videoWidth) * video.videoHeight)
+  serverDecodeCanvas.width = baseW
+  serverDecodeCanvas.height = baseH
+  const ctx = serverDecodeCanvas.getContext("2d")
+  if(!ctx){
+    setScanStatus("Unable to capture frame.")
+    return
+  }
+  ctx.drawImage(video, 0, 0, baseW, baseH)
+  setScanStatus("Decoding captured frame...")
+  try{
+    const candidates = []
+    candidates.push(serverDecodeCanvas.toDataURL("image/png"))
+    candidates.push(serverDecodeCanvas.toDataURL("image/jpeg", 0.98))
+
+    const cropRatios = [0.9, 0.78, 0.66, 0.54]
+    cropRatios.forEach((ratio) => {
+      const cw = Math.round(baseW * ratio)
+      const ch = Math.round(baseH * ratio)
+      const cx = Math.round((baseW - cw) / 2)
+      const cy = Math.round((baseH - ch) / 2)
+      const cropCanvas = document.createElement("canvas")
+      cropCanvas.width = cw
+      cropCanvas.height = ch
+      const cctx = cropCanvas.getContext("2d")
+      if(cctx){
+        cctx.drawImage(serverDecodeCanvas, cx, cy, cw, ch, 0, 0, cw, ch)
+        candidates.push(cropCanvas.toDataURL("image/png"))
+        candidates.push(cropCanvas.toDataURL("image/jpeg", 0.98))
+      }
+    })
+
+    let decoded = ""
+    for(let i=0; i<candidates.length; i++){
+      try{
+        decoded = await decodeBarcodeImageData(candidates[i])
+        if(decoded){
+          break
+        }
+      } catch {}
+    }
+    if(!decoded){
+      throw new Error("Could not decode barcode from captured image. Hold barcode closer, keep it flat, and fill most of the frame.")
+    }
+    await handleDetectedBarcode(decoded)
+    setScanStatus(`Captured and decoded barcode: ${decoded}`)
+  } catch (err){
+    setScanStatus(err?.message || "Decode failed on captured frame.")
+  }
+}
+
+function readFileAsDataUrl(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ""))
+    reader.onerror = () => reject(new Error("Unable to read selected image file."))
+    reader.readAsDataURL(file)
+  })
+}
+
+async function decodeUploadedImage(){
+  const input = document.getElementById("barcodeImageFile")
+  const file = input?.files?.[0]
+  if(!file){
+    setScanStatus("Select a barcode image first.")
+    return
+  }
+  setScanStatus("Decoding uploaded barcode image...")
+  try{
+    const imageData = await readFileAsDataUrl(file)
+    const code = await decodeBarcodeImageData(imageData)
+    await handleDetectedBarcode(code)
+    setScanStatus(`Decoded uploaded image: ${code}`)
+  } catch (err){
+    setScanStatus(err?.message || "Unable to decode uploaded image.")
+  }
+}
+
+async function runBookAction(action){
+  if(!currentScannedBarcode){
+    setScanStatus("Scan a book first.")
+    return
+  }
+  setScanStatus(`${action === "borrow" ? "Borrowing" : "Returning"} book...`)
+  const response = await fetch(`${API_BASE}/books/${action}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      registrationNo: currentUser.registrationNo,
+      barcode: currentScannedBarcode
+    })
+  })
+  const data = await response.json().catch(() => ({}))
+  if(!response.ok){
+    setScanStatus(data.message || `Unable to ${action} this book.`)
+    return
+  }
+  if(data.user){ render(data.user) }
+  if(data.book){ renderScannedBook(data.book) }
+  setScanStatus(data.message || `Book ${action}ed successfully.`)
+}
+
+async function handleDetectedBarcode(value){
+  const now = Date.now()
+  if(value && (value !== lastDetectedValue || now - lastDetectedAt > 2000)){
+    lastDetectedValue = value
+    lastDetectedAt = now
+    await lookupBarcode(value)
+  }
+}
+
+async function startScanner(){
+  const video = document.getElementById("scanVideo")
+  stopScanner()
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    setScanStatus("Camera API unavailable. Open site on http://localhost and allow camera permission, or use manual/hardware scanner.")
+    return
+  }
+  if(!window.isSecureContext){
+    setScanStatus("Camera needs a secure context. Use http://localhost (not file://) for scanning.")
+    return
+  }
+
+  try{
+    const constraintsList = [
+      { video: { facingMode: { ideal: "environment" } }, audio: false },
+      { video: true, audio: false }
+    ]
+    let stream = null
+    for(const constraints of constraintsList){
+      try{
+        stream = await navigator.mediaDevices.getUserMedia(constraints)
+        if(stream){ break }
+      } catch {}
+    }
+    if(!stream){
+      throw new Error("no-stream")
+    }
+    scannerStream = stream
+    video.srcObject = scannerStream
+    try{ await video.play() } catch {}
+    scannerActive = true
+    setScanStatus("Camera started. Press Capture & Decode to read barcode.")
+  } catch {
+    scannerActive = false
+    setScanStatus("Unable to start camera. Allow webcam permission and retry.")
+  }
+}
+
+function stopScanner(){
+  scannerActive = false
+  if(scannerStream){
+    scannerStream.getTracks().forEach(track => track.stop())
+    scannerStream = null
+  }
+  const video = document.getElementById("scanVideo")
+  if(video){ video.srcObject = null }
+  setScanStatus("Camera stopped.")
+}
+
+function handleScannerKeyboardInput(event){
+  if(isEditableElement(event.target) && event.target.id !== "manualBarcode"){
+    return
+  }
+  const now = Date.now()
+  if(event.key === "Enter"){
+    const buffer = scannerKeyBuffer.trim()
+    const duration = scannerKeyStartedAt > 0 ? (now - scannerKeyStartedAt) : 0
+    const looksLikeScannerBurst = buffer.length >= 6 && duration > 0 && duration < 1500
+    scannerKeyBuffer = ""
+    scannerKeyStartedAt = 0
+    scannerKeyLastAt = 0
+    if(looksLikeScannerBurst){
+      lookupBarcode(buffer)
+      setScanStatus(`Hardware scan detected: ${buffer}`)
+      event.preventDefault()
+    }
+    return
+  }
+  if(event.key.length !== 1){
+    return
+  }
+  if(!/[0-9A-Za-z\-]/.test(event.key)){
+    return
+  }
+  if(!scannerKeyStartedAt || now - scannerKeyLastAt > 120){
+    scannerKeyBuffer = ""
+    scannerKeyStartedAt = now
+  }
+  scannerKeyLastAt = now
+  scannerKeyBuffer += event.key
+}
+
+async function logout(event){
+  if(event){ event.preventDefault() }
+  stopScanner()
+  stopRealtimeTracking()
+  await syncTrackedTime(true)
+  sessionStorage.removeItem("libraryUser")
+  sessionStorage.removeItem("libraryLoginMessage")
+  window.location.href = "index.html"
+}
+
+document.getElementById("startScanBtn").addEventListener("click", startScanner)
+document.getElementById("stopScanBtn").addEventListener("click", stopScanner)
+document.getElementById("scanLookupBtn").addEventListener("click", () => lookupBarcode(document.getElementById("manualBarcode").value))
+document.getElementById("scanBorrowBtn").addEventListener("click", () => runBookAction("borrow"))
+document.getElementById("scanReturnBtn").addEventListener("click", () => runBookAction("return"))
+document.getElementById("captureDecodeBtn").addEventListener("click", captureAndDecodeFromVideo)
+document.getElementById("uploadDecodeBtn").addEventListener("click", decodeUploadedImage)
+document.getElementById("manualBarcode").addEventListener("keydown", (event) => {
+  if(event.key === "Enter"){
+    event.preventDefault()
+    lookupBarcode(document.getElementById("manualBarcode").value)
+  }
+})
+document.addEventListener("keydown", handleScannerKeyboardInput)
+
+fetchBorrowed()
+setInterval(fetchBorrowed, 20000)
+unsyncedSeconds = loadPendingSeconds()
+baseSpentSeconds = getServerSpentSeconds(currentUser)
+renderLiveSpent()
+startRealtimeTracking()
+
+window.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){
+    stopScanner()
+    flushUnsyncedToSession()
+  }
+})
+window.addEventListener("pagehide", () => {
+  stopScanner()
+  flushUnsyncedToSession()
+})
+window.addEventListener("beforeunload", flushUnsyncedToSession)
+document.querySelectorAll('a[href$=".html"]').forEach(link => {
+  link.addEventListener("click", async (event) => {
+    const target = link.getAttribute("href")
+    if(!target){ return }
+    event.preventDefault()
+    stopScanner()
+    await syncTrackedTime(true)
+    window.location.href = target
+  })
+})
+</script>
+</body>
+</html>

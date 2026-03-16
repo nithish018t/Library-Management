@@ -1,0 +1,418 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fine & Dues</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 14% 18%, rgba(208,88,88,.22), transparent 28%),radial-gradient(circle at 84% 18%, rgba(96,129,212,.28), transparent 24%),radial-gradient(circle at 80% 82%, rgba(233,176,93,.24), transparent 24%),linear-gradient(135deg, rgba(255,255,255,.12) 25%, transparent 25%) 0 0/28px 28px,linear-gradient(160deg,#f7ebeb 0%,#eef2fb 48%,#f7f0e3 100%);min-height:100vh;padding:22px;display:flex}
+.frame{width:min(1280px,100%);margin:0 auto;background:rgba(255,255,255,.94);border:1px solid #ddd;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.12);overflow:hidden;display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 44px)}
+.sidebar{background:linear-gradient(180deg,#f0f0f0,#ebebeb);border-right:1px solid #e4e4e4;padding:20px 14px}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:#666}
+.btn{border:none;border-radius:8px;background:#2b2b2b;color:#fff;padding:9px 12px;cursor:pointer}
+.btn:hover{background:#151515}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.card{background:#fff;border:1px solid #e4e4e4;border-radius:10px;padding:10px}
+.k{font-size:11px;color:#787}
+.v{font-size:24px;font-weight:700}
+.bad{color:#973737}
+.ok{color:#1f6c36}
+.warn{color:#a36c1f}
+.panel{background:#fff;border:1px solid #e4e4e4;border-radius:10px;padding:12px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.select{border:1px solid #d8d8d8;border-radius:8px;padding:8px 10px;background:#fff;font-size:12px}
+.table{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow:auto}
+.row{border:1px solid #e4e4e4;border-radius:8px;padding:10px;background:#fff}
+.row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.book{font-size:14px;font-weight:700}
+.meta{font-size:12px;color:#666;margin-top:3px}
+.badge{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;font-weight:700}
+.badge.overdue{background:#fde8e8;color:#973737}
+.badge.returned{background:#e8f6ec;color:#1f6c36}
+.badge.active{background:#e8edff;color:#2249a6}
+.badge.soon{background:#fff3df;color:#8a5d13}
+.empty{font-size:12px;color:#666}
+@media (max-width:1050px){.frame{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="borrowed.html">Borrowed Books</a>
+      <a href="textbooks.html">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a href="reading-history.html">Reading History</a>
+      <a class="active" href="#">Fine & Dues</a>
+      <a href="year-resources.html">Year Resources</a>
+      <a href="announcements.html">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="top">
+      <div>
+        <h1 class="title">Fine & Dues</h1>
+        <div class="sub" id="who"></div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="k">Time Spent on Portal</div><div class="v" id="spentPortal">0h 0m 0s</div></div>
+      <div class="card"><div class="k">Total Fine Till Date</div><div class="v bad" id="totalFine">Rs 0</div></div>
+      <div class="card"><div class="k">Overdue Books</div><div class="v bad" id="overdueCount">0</div></div>
+      <div class="card"><div class="k">Returned Books</div><div class="v ok" id="returnedCount">0</div></div>
+      <div class="card"><div class="k">Projected Fine Tomorrow</div><div class="v warn" id="projectedFine">Rs 0</div></div>
+    </div>
+
+    <section class="panel">
+      <div class="toolbar">
+        <div class="sub" id="summaryLine">Loading dues...</div>
+        <select id="statusFilter" class="select">
+          <option value="all">All</option>
+          <option value="overdue">Overdue</option>
+          <option value="active">Active (Not Returned)</option>
+          <option value="returned">Returned</option>
+          <option value="soon">Due In 2 Days</option>
+        </select>
+      </div>
+      <div class="table" id="duesTable"></div>
+    </section>
+  </main>
+</div>
+
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+const raw = sessionStorage.getItem("libraryUser")
+if(!raw){ window.location.href = "index.html" }
+let currentUser = null
+try{ currentUser = JSON.parse(raw) } catch { window.location.href = "index.html" }
+if(!currentUser || !currentUser.registrationNo){ window.location.href = "index.html" }
+
+const pendingSecondsKey = `pending_seconds_${currentUser.registrationNo}`
+let unsyncedSeconds = 0
+let baseSpentSeconds = 0
+let trackTicker = null
+let trackSyncTimer = null
+let trackSyncInFlight = false
+let refreshTimer = null
+let lastTickMs = Date.now()
+let tickRemainderMs = 0
+let allRows = []
+
+const DAILY_FINE_PER_OVERDUE_BOOK = 5
+
+document.getElementById("who").innerText = `${currentUser.fullName || currentUser.name || "Student"} (${currentUser.registrationNo})`
+
+function getServerSpentSeconds(user){
+  const direct = Number(user?.spentSeconds)
+  if(Number.isFinite(direct) && direct >= 0){ return Math.round(direct) }
+  return Math.round((Number(user?.spentHours) || 0) * 3600)
+}
+
+function formatTimeSpent(totalSeconds){
+  const sec = Math.max(0, Math.round(totalSeconds))
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  const s = sec % 60
+  return `${h}h ${m}m ${s}s`
+}
+
+function parseDateSafe(v){
+  if(!v || typeof v !== "string"){ return null }
+  const t = Date.parse(v)
+  if(Number.isFinite(t)){ return new Date(t) }
+  const normalized = v.replace(/(\d{2})-(\d{2})-(\d{4})/, "$3-$2-$1")
+  const t2 = Date.parse(normalized)
+  if(Number.isFinite(t2)){ return new Date(t2) }
+  return null
+}
+
+function dayDiffFromNow(dateObj){
+  if(!dateObj){ return null }
+  const now = new Date()
+  const a = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  const b = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate())
+  return Math.round((b - a) / 86400000)
+}
+
+function renderLiveSpent(){
+  const el = document.getElementById("spentPortal")
+  if(el){ el.innerText = formatTimeSpent(baseSpentSeconds + unsyncedSeconds) }
+}
+
+function loadPendingSeconds(){
+  const rawPending = sessionStorage.getItem(pendingSecondsKey)
+  const value = Number(rawPending)
+  if(Number.isFinite(value) && value > 0){ return Math.round(value) }
+  return 0
+}
+
+function persistPendingSeconds(){
+  const safe = Math.max(0, Math.round(unsyncedSeconds))
+  if(safe === 0){ sessionStorage.removeItem(pendingSecondsKey); return }
+  sessionStorage.setItem(pendingSecondsKey, String(safe))
+}
+
+function updateSessionUserSpent(secondsDelta){
+  if(!Number.isFinite(secondsDelta) || secondsDelta <= 0){ return }
+  const prevSeconds = getServerSpentSeconds(currentUser)
+  const nextSeconds = prevSeconds + Math.round(secondsDelta)
+  currentUser.spentSeconds = nextSeconds
+  currentUser.spentHours = nextSeconds / 3600
+  sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+}
+
+function statusBadgeClass(kind){
+  if(kind === "Overdue"){ return "overdue" }
+  if(kind === "Returned"){ return "returned" }
+  if(kind === "Due Soon"){ return "soon" }
+  return "active"
+}
+
+function buildRows(user){
+  const active = Array.isArray(user.activeBorrowedBooks) ? user.activeBorrowedBooks : []
+  const returned = Array.isArray(user.returnedBorrowedBooks) ? user.returnedBorrowedBooks : []
+  const fineTotal = Number(user.fineAmount) || 0
+  const overdueActive = active.filter(b => String(b.status || "").toLowerCase() === "overdue")
+  const perOverdueShare = overdueActive.length > 0 ? (fineTotal / overdueActive.length) : 0
+
+  const activeRows = active.map(b => {
+    const dueDateObj = parseDateSafe(b.dueDate)
+    const dueInDays = dayDiffFromNow(dueDateObj)
+    let kind = "Active"
+    if(String(b.status || "").toLowerCase() === "overdue"){ kind = "Overdue" }
+    else if(Number.isFinite(dueInDays) && dueInDays >= 0 && dueInDays <= 2){ kind = "Due Soon" }
+
+    return {
+      title: b.bookTitle || "-",
+      barcode: b.bookBarcode || "-",
+      borrowedAt: b.borrowedAt || "-",
+      dueDate: b.dueDate || "-",
+      returnedAt: "-",
+      returned: false,
+      rawStatus: b.status || "Active",
+      kind,
+      dueInDays,
+      estimatedFine: kind === "Overdue" ? perOverdueShare : 0
+    }
+  })
+
+  const returnedRows = returned.map(b => ({
+    title: b.bookTitle || "-",
+    barcode: b.bookBarcode || "-",
+    borrowedAt: b.borrowedAt || "-",
+    dueDate: b.dueDate || "-",
+    returnedAt: b.returnedAt || "-",
+    returned: true,
+    rawStatus: b.status || "Returned",
+    kind: "Returned",
+    dueInDays: null,
+    estimatedFine: 0
+  }))
+
+  return activeRows.concat(returnedRows)
+}
+
+function renderRows(){
+  const filter = document.getElementById("statusFilter").value
+  const root = document.getElementById("duesTable")
+  let rows = allRows.slice()
+
+  if(filter === "overdue"){ rows = rows.filter(r => r.kind === "Overdue") }
+  if(filter === "active"){ rows = rows.filter(r => !r.returned) }
+  if(filter === "returned"){ rows = rows.filter(r => r.returned) }
+  if(filter === "soon"){ rows = rows.filter(r => r.kind === "Due Soon") }
+
+  if(rows.length === 0){
+    root.innerHTML = '<div class="empty">No records for this filter.</div>'
+    return
+  }
+
+  root.innerHTML = rows.map(r => {
+    const dueMsg = r.returned ? `Returned At: ${r.returnedAt}` : `Due Date: ${r.dueDate}`
+    const dayMsg = (Number.isFinite(r.dueInDays) && !r.returned)
+      ? (r.dueInDays < 0 ? `${Math.abs(r.dueInDays)} day(s) overdue` : `${r.dueInDays} day(s) left`)
+      : "-"
+    return `
+      <article class="row">
+        <div class="row-top">
+          <div>
+            <div class="book">${r.title}</div>
+            <div class="meta">Barcode: ${r.barcode}</div>
+            <div class="meta">Borrowed At: ${r.borrowedAt}</div>
+            <div class="meta">${dueMsg}</div>
+            <div class="meta">Return Status: ${r.returned ? "Returned" : "Not Returned"}</div>
+            <div class="meta">Due Tracker: ${dayMsg}</div>
+          </div>
+          <div>
+            <div class="badge ${statusBadgeClass(r.kind)}">${r.kind}</div>
+            <div class="meta" style="margin-top:8px">Est. Fine Till Date: Rs ${Math.max(0, Number(r.estimatedFine || 0)).toFixed(2)}</div>
+          </div>
+        </div>
+      </article>
+    `
+  }).join("")
+}
+
+function render(user){
+  currentUser = user
+  baseSpentSeconds = getServerSpentSeconds(user)
+  sessionStorage.setItem("libraryUser", JSON.stringify(user))
+  const normalized = normalizeAcademicInfo(user)
+  document.getElementById("who").innerText = `${user.fullName} (${user.registrationNo}) | ${user.btechBranch} | Year ${normalized.year} | Sem ${normalized.semester}`
+
+  const active = Array.isArray(user.activeBorrowedBooks) ? user.activeBorrowedBooks : []
+  const returned = Array.isArray(user.returnedBorrowedBooks) ? user.returnedBorrowedBooks : []
+  const overdue = active.filter(x => String(x.status || "").toLowerCase() === "overdue")
+  const fine = Number(user.fineAmount) || 0
+  const projectedTomorrow = fine + (overdue.length * DAILY_FINE_PER_OVERDUE_BOOK)
+
+  document.getElementById("totalFine").innerText = `Rs ${fine.toFixed(2)}`
+  document.getElementById("overdueCount").innerText = overdue.length
+  document.getElementById("returnedCount").innerText = returned.length
+  document.getElementById("projectedFine").innerText = `Rs ${projectedTomorrow.toFixed(2)}`
+  document.getElementById("summaryLine").innerText = `Nearest Deadline: ${user.nearestDeadline || "-"} | Current Fine: Rs ${fine.toFixed(2)} | Projection uses Rs ${DAILY_FINE_PER_OVERDUE_BOOK}/book/day for overdue items.`
+
+  allRows = buildRows(user)
+  renderRows()
+  renderLiveSpent()
+}
+
+function normalizeAcademicInfo(user){
+  const rawYear = Number(user?.academicYear)
+  const rawSemester = Number(user?.semester)
+  let year = Number.isFinite(rawYear) && rawYear > 0 ? Math.round(rawYear) : 1
+  let semester = 1
+  if(Number.isFinite(rawSemester) && rawSemester > 0){
+    semester = Math.round(rawSemester) === 2 ? 2 : 1
+  }
+  year = Math.max(1, Math.min(4, year))
+  return { year, semester }
+}
+
+async function fetchFineDues(){
+  const res = await fetch(`${API_BASE}/dashboard/${encodeURIComponent(currentUser.registrationNo)}`)
+  const data = await res.json().catch(() => ({}))
+  if(res.ok && data.user){ render(data.user) }
+}
+
+function applyElapsedMs(elapsedMs){
+  if(!Number.isFinite(elapsedMs) || elapsedMs <= 0){ return }
+  tickRemainderMs += elapsedMs
+  const wholeSeconds = Math.floor(tickRemainderMs / 1000)
+  if(wholeSeconds <= 0){ return }
+  tickRemainderMs -= wholeSeconds * 1000
+  unsyncedSeconds += wholeSeconds
+  persistPendingSeconds()
+  renderLiveSpent()
+}
+
+function captureElapsedNow(){
+  const now = Date.now()
+  const elapsed = now - lastTickMs
+  lastTickMs = now
+  applyElapsedMs(elapsed)
+}
+
+async function syncTrackedTime(keepaliveMode = false){
+  captureElapsedNow()
+  if(unsyncedSeconds <= 0){ return }
+  if(trackSyncInFlight){ return }
+  trackSyncInFlight = true
+  const secondsToSync = unsyncedSeconds
+  try{
+    const response = await fetch(`${API_BASE}/track-time`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: keepaliveMode,
+      body: JSON.stringify({
+        registrationNo: currentUser.registrationNo,
+        secondsSpent: secondsToSync
+      })
+    })
+    if(!response.ok){ throw new Error("time-sync failed") }
+    baseSpentSeconds += secondsToSync
+    unsyncedSeconds -= secondsToSync
+    if(unsyncedSeconds < 0){ unsyncedSeconds = 0 }
+    updateSessionUserSpent(secondsToSync)
+    persistPendingSeconds()
+    renderLiveSpent()
+    if(!keepaliveMode){ fetchFineDues() }
+  } catch {
+    unsyncedSeconds = Math.max(unsyncedSeconds, secondsToSync)
+    persistPendingSeconds()
+  } finally {
+    trackSyncInFlight = false
+  }
+}
+
+function flushUnsyncedToSession(){
+  captureElapsedNow()
+  persistPendingSeconds()
+}
+
+function startRealtimeTracking(){
+  lastTickMs = Date.now()
+  tickRemainderMs = 0
+  trackTicker = setInterval(captureElapsedNow, 1000)
+  trackSyncTimer = setInterval(syncTrackedTime, 15000)
+  refreshTimer = setInterval(fetchFineDues, 20000)
+}
+
+function stopRealtimeTracking(){
+  captureElapsedNow()
+  persistPendingSeconds()
+  if(trackTicker){ clearInterval(trackTicker) }
+  if(trackSyncTimer){ clearInterval(trackSyncTimer) }
+  if(refreshTimer){ clearInterval(refreshTimer) }
+}
+
+async function logout(event){
+  if(event){ event.preventDefault() }
+  stopRealtimeTracking()
+  await syncTrackedTime(true)
+  sessionStorage.removeItem("libraryUser")
+  window.location.href = "index.html"
+}
+
+document.getElementById("statusFilter").addEventListener("change", renderRows)
+window.addEventListener("pagehide", flushUnsyncedToSession)
+window.addEventListener("beforeunload", flushUnsyncedToSession)
+document.querySelectorAll('.menu a[href$=".html"]').forEach(link => {
+  link.addEventListener("click", async (event) => {
+    const target = link.getAttribute("href")
+    if(!target){ return }
+    event.preventDefault()
+    stopRealtimeTracking()
+    await syncTrackedTime(true)
+    flushUnsyncedToSession()
+    window.location.href = target
+  })
+})
+
+unsyncedSeconds = loadPendingSeconds()
+baseSpentSeconds = getServerSpentSeconds(currentUser)
+render(currentUser)
+startRealtimeTracking()
+fetchFineDues()
+</script>
+</body>
+</html>

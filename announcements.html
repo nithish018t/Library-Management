@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcements</title>
+<style>
+:root{--line:#e4e4e4;--panel:#fff;--text:#232323;--muted:#666;--accent:#8a5d13;--accent-soft:#fff1d9;--success:#226737;--success-soft:#e9f6ec;--alert:#973737;--alert-soft:#fde8e8}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:radial-gradient(circle at 14% 14%, rgba(244,184,96,.24), transparent 24%),radial-gradient(circle at 86% 18%, rgba(95,138,212,.28), transparent 22%),radial-gradient(circle at 78% 82%, rgba(112,182,175,.18), transparent 22%),repeating-linear-gradient(135deg, rgba(255,255,255,.12) 0 18px, rgba(255,255,255,0) 18px 36px),linear-gradient(160deg,#f8f0e5 0%,#eef2fb 48%,#e7f1ec 100%);min-height:100vh;padding:22px;display:flex}
+.frame{width:min(1280px,100%);margin:0 auto;background:rgba(255,255,255,.94);border:1px solid #ddd;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.12);overflow:hidden;display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 44px)}
+.sidebar{background:linear-gradient(180deg,#f0f0f0,#ebebeb);border-right:1px solid var(--line);padding:20px 14px}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{padding:18px;display:grid;grid-template-rows:auto auto 1fr;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));min-width:0}
+.crumb{font-size:12px;color:#7f7f7f;margin-bottom:4px}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:var(--muted)}
+.hero,.panel,.card{background:#fff;border:1px solid var(--line);border-radius:14px}
+.hero{padding:18px;background:radial-gradient(circle at top right, rgba(244,184,96,.22), transparent 30%),linear-gradient(135deg,#fff8ef,#f7fbff 56%,#eff7f2)}
+.hero-grid,.timeline{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:10px;align-items:start}
+.hero h2{margin:0;font-size:24px}
+.hero-copy,.card-copy,.announce-copy{font-size:13px;line-height:1.55;color:#4d4d4d}
+.badge-row,.focus-list,.announce-list,.mini-list{display:flex;flex-direction:column;gap:8px}
+.badge-row{flex-direction:row;flex-wrap:wrap;margin-top:12px}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700}
+.pill.live{background:var(--alert-soft);color:var(--alert)}
+.pill.upskill{background:var(--success-soft);color:var(--success)}
+.pill.track{background:var(--accent-soft);color:var(--accent)}
+.focus-box,.panel{padding:14px}
+.focus-item,.mini-item,.announce-item{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfbfb}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.card{padding:14px}
+.card-meta{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.6px}
+.card h3,.panel h3{margin:0 0 8px;font-size:16px}
+.announce-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.announce-title,.mini-title{font-size:13px;font-weight:700}
+.announce-title{flex:1 1 220px;min-width:0;line-height:1.45}
+.announce-tag{font-size:11px;font-weight:700;padding:5px 8px;border-radius:999px;flex:0 0 auto;white-space:nowrap}
+.announce-item,.mini-item,.focus-item,.card,.panel{min-width:0}
+.announce-copy{margin-top:8px;word-break:break-word}
+.timeline>.panel,.timeline>aside{min-width:0}
+.announce-tag.leetcode{background:#fff1df;color:#9b6209}
+.announce-tag.hackerrank{background:#e9f6ec;color:#1f6c36}
+.announce-tag.nptel{background:#e9efff;color:#254ca8}
+.announce-tag.general{background:#f1ebff;color:#6d47a1}
+.announce-foot,.mini-copy{font-size:12px;color:#666;margin-top:6px;line-height:1.5}
+@media (max-width:1080px){.frame{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.hero-grid,.timeline{grid-template-columns:1fr}}
+@media (max-width:760px){.cards{grid-template-columns:1fr}.title{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="borrowed.html">Borrowed Books</a>
+      <a href="textbooks.html">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a href="reading-history.html">Reading History</a>
+      <a href="fines-dues.html">Fine & Dues</a>
+      <a href="year-resources.html">Year Resources</a>
+      <a class="active" href="#">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+  <main class="content">
+    <div>
+      <div class="crumb">Library Portal / Campus Updates</div>
+      <h1 class="title">Announcements</h1>
+      <div class="sub" id="who">Loading account...</div>
+    </div>
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <h2 id="heroTitle">Weekly focus</h2>
+          <div class="hero-copy" id="heroCopy">Preparing your branch and day-based update.</div>
+          <div class="badge-row" id="badgeRow"></div>
+        </div>
+        <aside class="focus-box">
+          <h3 id="focusTitle">Today reminders</h3>
+          <div class="focus-list" id="focusList"></div>
+        </aside>
+      </div>
+    </section>
+    <section class="cards" id="cardsGrid"></section>
+    <section class="timeline">
+      <section class="panel">
+        <h3>Latest Announcements</h3>
+        <div class="announce-list" id="announceList"></div>
+      </section>
+      <aside class="panel">
+        <h3 id="actionsTitle">Suggested Actions</h3>
+        <div class="mini-list" id="actionsList"></div>
+      </aside>
+    </section>
+  </main>
+</div>
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+const raw=sessionStorage.getItem("libraryUser")
+if(!raw){window.location.href="index.html"}
+let currentUser=null
+try{currentUser=JSON.parse(raw)}catch{window.location.href="index.html"}
+if(!currentUser||!currentUser.registrationNo){window.location.href="index.html"}
+const pendingSecondsKey=`pending_seconds_${currentUser.registrationNo}`
+let unsyncedSeconds=0,baseSpentSeconds=0,trackTicker=null,trackSyncTimer=null,trackSyncInFlight=false,lastTickMs=Date.now(),tickRemainderMs=0
+const dayPlans={monday:{title:"Monday foundation work",copy:"Monday is for structure. Check NPTEL deadlines, solve one coding problem, and lock one branch topic for the week.",badges:[["Monday Push","live"],["NPTEL Check","upskill"],["Core Concepts","track"]],reminders:["Check all course and coding deadlines first.","Do one hard thing before browsing anything else.","Keep Monday for structure, not random exploration."],actions:[["Daily problem","Solve one LeetCode daily or one medium HackerRank problem before evening."],["Branch revision","Revise one important branch concept that will matter in exams or interviews."],["Resource check","Open one textbook or notes source and bookmark what you need for the week."]]},tuesday:{title:"Tuesday problem-solving momentum",copy:"Tuesday is for repetition, speed, and concept reinforcement across coding and branch work.",badges:[["Timed Set","live"],["Revision Loop","track"],["Practice Flow","upskill"]],reminders:["Track weak topics after every practice session.","Use one timed block today.","Small consistent effort beats random long sessions."],actions:[["Timed practice","Attempt a 30 to 45 minute coding or aptitude block without interruptions."],["Branch problem set","Work through one subject worksheet or past question set."],["Mini revision","Spend 20 minutes revising formulas, syntax, or key definitions."]]},wednesday:{title:"Wednesday assessment check",copy:"Midweek is ideal for testing progress. Use today for mock rounds, branch application, and course follow-up.",badges:[["Midweek Test","live"],["Applied Learning","track"],["Contest Mindset","upskill"]],reminders:["Use timed evaluation to measure progress.","Pick one practical branch task, not only theory.","Correct direction now, not at the weekend."],actions:[["Mock round","Attempt one coding contest, SQL set, or mini assessment under time pressure."],["Applied branch work","Solve one practical or numerical problem from your branch subject."],["Resume note","If you completed a milestone, document it immediately."]]},thursday:{title:"Thursday branch depth and certification work",copy:"Thursday should go deeper. Push one difficult branch area and one upskilling track forward.",badges:[["Deep Work","track"],["Assignment Mode","upskill"],["Retry Solve","live"]],reminders:["Protect one uninterrupted deep-study block.","Do not postpone NPTEL work to the deadline edge.","Re-solving old problems builds confidence."],actions:[["Deep branch slot","Study one difficult branch topic for 60 to 90 minutes with full attention."],["NPTEL assignment","Finish or draft pending assignment answers."],["Coding polish","Redo one previously failed problem without notes."]]},friday:{title:"Friday placement alignment",copy:"Friday connects academics with placement prep. Build one bridge between coursework, coding, and profile building.",badges:[["Placement Prep","live"],["Profile Build","upskill"],["Interview Review","track"]],reminders:["Make Friday useful for both academics and career prep.","One documented milestone is better than vague effort.","Tie one branch subject to interview preparation."],actions:[["Interview prep","Pick one DSA, DBMS, OS, CN, aptitude, or branch theory topic and revise it interview-style."],["Profile milestone","Finish one HackerRank badge section or improve one public coding profile."],["Week notes","Write what improved this week and what still feels weak."]]},saturday:{title:"Saturday long-form practice",copy:"Saturday gives you room for bigger work blocks. Use it for longer coding sessions, revision catch-up, and project thinking.",badges:[["Long Session","live"],["Backlog Clear","track"],["Project Link","upskill"]],reminders:["Use the extra time for focused work, not scattered browsing.","Backlog should reduce today, not increase.","Archive useful notes before stopping."],actions:[["Long coding block","Spend 90 minutes on a focused problem set, contest, or topic series."],["Backlog recovery","Clear one pending branch or certification task from earlier in the week."],["Project thinking","Connect your branch knowledge to a mini project or lab idea."]]},sunday:{title:"Sunday planning and backlog cleanup",copy:"Use Sunday to reset the week. Review weak topics, shortlist one coding target, and plan one branch concept block before Monday starts.",badges:[["Week Reset","track"],["Backlog Cleanup","live"],["Branch Prep","upskill"]],reminders:["Create a short plan for Monday before logging out.","Carry only three priorities into the next week.","Pick one coding platform focus instead of splitting attention."],actions:[["Weekly reset","Review unfinished coding questions and mark what must move into Monday."],["Profile cleanup","Update your LeetCode, HackerRank, GitHub, or notes folder."],["Branch revision","Spend one focused hour on a branch-specific concept instead of random browsing."]]}}
+dayPlans.thursday=dayPlans.thursday;dayPlans.tuesday=dayPlans.tuesday
+const branchPrograms={CSE:{cards:[["Coding Practice","LeetCode DSA and Pattern Building","Prioritize arrays, strings, recursion, trees, graphs, and interview-style medium problems for placement readiness."],["Assessment Prep","HackerRank Problem Solving and SQL","Keep Problem Solving and SQL badges active. These matter directly for online assessment rounds."],["Certification","NPTEL for OS, DBMS, CN, and AI","Choose one subject that supports both semester performance and interview preparation."]],ann:[["LeetCode DSA Track for CSE","leetcode","LeetCode","Focus on core DSA topics first. Build a weekly split between arrays, linked lists, trees, graphs, and revision of solved patterns.","Priority: High | Strong fit for CSE placement prep"],["HackerRank SQL and Coding Tests","hackerrank","HackerRank","Spend one session each week on SQL plus one on coding speed. Online assessments often expect both.","Priority: High | Useful for internship and campus tests"],["NPTEL Revision for Core CS Subjects","nptel","NPTEL","Use NPTEL selectively for DBMS, OS, CN, AI, or Python-based electives when textbooks feel too dense.","Priority: Medium | Works well with semester revision"],["Resume Alignment for Coding Profiles","general","Career","Keep GitHub, LeetCode, and HackerRank profiles consistent with your resume claims and project list.","Priority: Medium | Important from 3rd year onward"]]},ECE:{cards:[["Core Concepts","Signals, Circuits, and Problem Practice","Keep branch time anchored in circuits, communication systems, and embedded thinking while maintaining coding logic."],["Coding Support","LeetCode for Aptitude and DSA Basics","Maintain basic DSA and problem-solving practice for internship rounds and general placement assessments."],["Certification","NPTEL for Communication and Embedded Systems","Pick NPTEL courses that reinforce branch fundamentals and lab-heavy topics."]],ann:[["LeetCode for Logic and Interview Basics","leetcode","LeetCode","ECE students should maintain a moderate coding habit focused on arrays, binary search, and logical reasoning patterns.","Priority: Medium | Good for mixed-role assessments"],["HackerRank Aptitude and SQL Support","hackerrank","HackerRank","Timed problem solving and basic SQL can improve placement readiness even for electronics-focused students.","Priority: Medium | Helps with screening rounds"],["NPTEL Focus on Embedded and Communication","nptel","NPTEL","Use NPTEL for communication systems, VLSI basics, embedded systems, and signal-related revision support.","Priority: High | Strong branch value"],["Project and Lab Record Updates","general","Career","Document mini projects, simulations, and lab work clearly. They matter more than vague profile statements.","Priority: High | Important for branch interviews"]]},EEE:{cards:[["Core Concepts","Machines, Power Systems, and Numerical Practice","Balance quantitative branch work with enough coding exposure for general placement filters."],["Coding Support","HackerRank and Basic DSA","Keep problem-solving active at a manageable level while prioritizing electrical fundamentals."],["Certification","NPTEL for Power Electronics and Control","Use NPTEL to support high-value branch topics that need repeated revision."]],ann:[["Coding Practice for General Screening","hackerrank","HackerRank","Maintain weekly aptitude, logic, and beginner-to-medium coding practice for broad placement eligibility.","Priority: Medium | Helps in common test rounds"],["LeetCode Basics for Consistency","leetcode","LeetCode","Do not ignore coding completely. Keep a slow but stable routine with arrays, strings, and simple recursion.","Priority: Medium | Good long-term support"],["NPTEL for Power and Control Topics","nptel","NPTEL","Pick courses aligned with electrical machines, power electronics, networks, or control systems for stronger revision structure.","Priority: High | Branch-aligned upskilling"],["Formula Sheet and Numerical Drill","general","Career","Use library sessions to maintain concise formula notes and solve one numerical set each week.","Priority: High | Best for exam and viva confidence"]]},MECH:{cards:[["Core Concepts","Mechanical Revision and Applied Practice","Use announcements as a structured reminder system for design, thermodynamics, manufacturing, and aptitude preparation."],["Coding Support","HackerRank for Aptitude and Logic","Maintain enough online problem-solving for tests while keeping branch fundamentals in the lead."],["Certification","NPTEL for CAD, Thermal, and Manufacturing","Choose one course that supports projects, labs, or future role alignment."]],ann:[["HackerRank for Screening Preparation","hackerrank","HackerRank","Mechanical students should keep problem solving, aptitude, and basic coding alive for general recruitment rounds.","Priority: Medium | Supports mass recruitment tests"],["LeetCode Light Track","leetcode","LeetCode","Stick to foundational problem solving rather than chasing advanced DSA too early if your branch workload is heavy.","Priority: Medium | Stable practice is enough"],["NPTEL for Mechanical Core Topics","nptel","NPTEL","Use NPTEL to revise thermodynamics, manufacturing, CAD/CAM, materials, and applied mechanics topics.","Priority: High | Strong branch relevance"],["Project Notes and Design Thinking","general","Career","Organize project ideas, lab records, and real-world applications. Interview conversations often start here.","Priority: High | Valuable for branch-focused interviews"]]},CIVIL:{cards:[["Core Concepts","Civil Fundamentals and Structured Revision","Prioritize surveying, structures, materials, and environmental topics while preserving placement readiness."],["Coding Support","Aptitude and Logic Practice","Use HackerRank or LeetCode mainly for reasoning discipline and screening-round confidence."],["Certification","NPTEL for Structures and Planning","Select courses that reinforce technical fundamentals or future specialization goals."]],ann:[["Practice for Placement Screening","hackerrank","HackerRank","Civil students should maintain basic timed reasoning and problem-solving practice even if coding is not their primary path.","Priority: Medium | Useful for company tests"],["LeetCode Foundation Track","leetcode","LeetCode","Keep a lightweight routine with basic patterns if you want broader placement flexibility.","Priority: Low to Medium | Optional but useful"],["NPTEL for Structures, Geotech, and Planning","nptel","NPTEL","Use NPTEL courses to build stronger conceptual clarity in key civil engineering topics.","Priority: High | Direct branch relevance"],["Field and Lab Documentation","general","Career","Keep notes on lab work, surveying practice, and project observations organized for viva and interviews.","Priority: High | Strong technical support"]]},IT:{cards:[["Coding Practice","LeetCode for DSA and Web-Oriented Roles","Balance DSA with database, web, and backend-related interview topics that suit IT placement tracks."],["Assessment Prep","HackerRank Problem Solving, SQL, and Debugging","Use HackerRank for coding speed, SQL, and platform-style assessments seen in internships and placements."],["Certification","NPTEL for DBMS, Cloud, and Software Systems","Choose one course that supports both project work and interview language."]],ann:[["LeetCode Path for IT Students","leetcode","LeetCode","Keep arrays, strings, trees, and SQL-connected problem solving active. Focus on practical interview patterns.","Priority: High | Strong fit for IT roles"],["HackerRank for Assessment Readiness","hackerrank","HackerRank","Timed coding and SQL practice are both useful for IT students targeting internships, support engineering, and developer roles.","Priority: High | Best for company tests"],["NPTEL for Software and Systems Topics","nptel","NPTEL","Use NPTEL to support DBMS, cloud, operating systems, software engineering, and Python or Java electives.","Priority: Medium | Good academic plus placement value"],["Project Link Consistency","general","Career","Make sure your project stack, GitHub activity, and profile claims all align before placement season gets serious.","Priority: High | Resume hygiene matters"]]}}
+function getDayKey(){return["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date().getDay()]}
+function getServerSpentSeconds(user){const direct=Number(user?.spentSeconds);if(Number.isFinite(direct)&&direct>=0){return Math.round(direct)}return Math.round((Number(user?.spentHours)||0)*3600)}
+function loadPendingSeconds(){const rawPending=sessionStorage.getItem(pendingSecondsKey);const value=Number(rawPending);if(Number.isFinite(value)&&value>0){return Math.round(value)}return 0}
+function persistPendingSeconds(){const safe=Math.max(0,Math.round(unsyncedSeconds));if(safe===0){sessionStorage.removeItem(pendingSecondsKey);return}sessionStorage.setItem(pendingSecondsKey,String(safe))}
+function updateSessionUserSpent(secondsDelta){if(!Number.isFinite(secondsDelta)||secondsDelta<=0){return}const prevSeconds=getServerSpentSeconds(currentUser);const nextSeconds=prevSeconds+Math.round(secondsDelta);currentUser.spentSeconds=nextSeconds;currentUser.spentHours=nextSeconds/3600;sessionStorage.setItem("libraryUser",JSON.stringify(currentUser))}
+function applyElapsedMs(elapsedMs){if(!Number.isFinite(elapsedMs)||elapsedMs<=0){return}tickRemainderMs+=elapsedMs;const wholeSeconds=Math.floor(tickRemainderMs/1000);if(wholeSeconds<=0){return}tickRemainderMs-=wholeSeconds*1000;unsyncedSeconds+=wholeSeconds;persistPendingSeconds()}
+function captureElapsedNow(){const now=Date.now();const elapsed=now-lastTickMs;lastTickMs=now;applyElapsedMs(elapsed)}
+async function syncTrackedTime(keepaliveMode=false){captureElapsedNow();if(unsyncedSeconds<=0||trackSyncInFlight){return}trackSyncInFlight=true;const secondsToSync=unsyncedSeconds;try{const response=await fetch(`${API_BASE}/track-time`,{method:"POST",headers:{"Content-Type":"application/json"},keepalive:keepaliveMode,body:JSON.stringify({registrationNo:currentUser.registrationNo,secondsSpent:secondsToSync})});if(!response.ok){throw new Error("time-sync failed")}baseSpentSeconds+=secondsToSync;unsyncedSeconds-=secondsToSync;if(unsyncedSeconds<0){unsyncedSeconds=0}updateSessionUserSpent(secondsToSync);persistPendingSeconds()}catch{unsyncedSeconds=Math.max(unsyncedSeconds,secondsToSync);persistPendingSeconds()}finally{trackSyncInFlight=false}}
+function flushUnsyncedToSession(){captureElapsedNow();persistPendingSeconds()}
+function startRealtimeTracking(){lastTickMs=Date.now();tickRemainderMs=0;trackTicker=setInterval(captureElapsedNow,1000);trackSyncTimer=setInterval(syncTrackedTime,15000)}
+function stopRealtimeTracking(){captureElapsedNow();persistPendingSeconds();if(trackTicker){clearInterval(trackTicker)}if(trackSyncTimer){clearInterval(trackSyncTimer)}}
+function renderAnnouncementsPage(){const branch=String(currentUser.btechBranch||"").toUpperCase()||"CSE";const dayKey=getDayKey();const dayPlan=dayPlans[dayKey]||dayPlans.monday;const program=branchPrograms[branch]||branchPrograms.CSE;const dayLabel=dayKey.charAt(0).toUpperCase()+dayKey.slice(1);document.getElementById("who").innerText=`${currentUser.fullName||currentUser.name||"Student"} (${currentUser.registrationNo}) | ${branch} | ${dayLabel} plan`;document.getElementById("heroTitle").innerText=`${dayPlan.title} for ${branch}`;document.getElementById("heroCopy").innerText=dayPlan.copy;document.getElementById("focusTitle").innerText=`${dayLabel} reminders`;document.getElementById("badgeRow").innerHTML=dayPlan.badges.map(item=>`<span class="pill ${item[1]}">${item[0]}</span>`).join("");document.getElementById("focusList").innerHTML=dayPlan.reminders.map(item=>`<div class="focus-item">${item}</div>`).join("");document.getElementById("cardsGrid").innerHTML=program.cards.map(card=>`<article class="card"><div class="card-meta">${card[0]}</div><h3>${card[1]}</h3><div class="card-copy">${card[2]}</div></article>`).join("");document.getElementById("announceList").innerHTML=program.ann.map(item=>`<article class="announce-item"><div class="announce-top"><div class="announce-title">${item[0]}</div><span class="announce-tag ${item[1]}">${item[2]}</span></div><div class="announce-copy">${item[3]}</div><div class="announce-foot">${item[4]}</div></article>`).join("");document.getElementById("actionsTitle").innerText="Suggested Actions";document.getElementById("actionsList").innerHTML=dayPlan.actions.map(item=>`<div class="mini-item"><div class="mini-title">${item[0]}</div><div class="mini-copy">${item[1]}</div></div>`).join("")}
+async function logout(event){if(event){event.preventDefault()}stopRealtimeTracking();await syncTrackedTime(true);sessionStorage.removeItem("libraryUser");sessionStorage.removeItem("libraryLoginMessage");window.location.href="index.html"}
+window.addEventListener("pagehide",flushUnsyncedToSession)
+window.addEventListener("beforeunload",flushUnsyncedToSession)
+window.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){flushUnsyncedToSession()}})
+document.querySelectorAll('.menu a[href]').forEach(link=>{link.addEventListener("click",async event=>{const href=link.getAttribute("href");if(!href||href==="#"||href.toLowerCase().startsWith("javascript:")){return}event.preventDefault();stopRealtimeTracking();await syncTrackedTime(true);flushUnsyncedToSession();window.location.href=href})})
+unsyncedSeconds=loadPendingSeconds();baseSpentSeconds=getServerSpentSeconds(currentUser);renderAnnouncementsPage();startRealtimeTracking()
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: onepiece-library-backend
+    runtime: java
+    rootDir: backend
+    plan: free
+    buildCommand: mvn clean package
+    startCommand: java -jar target/library-portal-backend-1.0.0.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false

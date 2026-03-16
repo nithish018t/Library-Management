@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textbooks</title>
+<style>
+:root{
+  --line:#e4e4e4;
+  --panel:#ffffff;
+  --text:#232323;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(86,122,214,.34), transparent 30%),
+    radial-gradient(circle at 88% 18%, rgba(255,211,132,.24), transparent 22%),
+    linear-gradient(120deg, rgba(255,255,255,.14) 0 8%, transparent 8% 16%, rgba(255,255,255,.1) 16% 24%, transparent 24% 32%),
+    linear-gradient(160deg,#e8eefb 0%,#f5efe7 48%,#e6f2e8 100%);
+  min-height:100vh;
+  padding:22px;
+  display:flex;
+}
+.frame{
+  width:min(1280px,100%);
+  margin:0 auto;
+  background:rgba(255,255,255,.94);
+  border:1px solid #ddd;
+  border-radius:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.12);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:230px 1fr;
+  min-height:calc(100vh - 44px);
+}
+.sidebar{background:linear-gradient(180deg,#f0f0f0,#ebebeb);border-right:1px solid var(--line);padding:20px 14px}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{padding:18px;display:grid;grid-template-rows:auto auto 1fr;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:#666}
+.search{border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:280px;max-width:100%;font-size:13px;background:#fff}
+.info{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;color:#4a4a4a}
+.info-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.spent-pill{display:inline-block;background:#202020;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
+.main-grid{display:grid;grid-template-columns:2fr 1fr;gap:10px;min-height:0}
+.books-panel,.details-panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-height:0}
+.books-panel h3,.details-panel h3{margin:0 0 8px}
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;max-height:540px;overflow:auto;padding-right:4px}
+.book-card{border:1px solid var(--line);border-radius:10px;background:#fafafa;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.book-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.book-card.active{border-color:#2b2b2b;box-shadow:0 0 0 2px rgba(0,0,0,.08)}
+.book-card{content-visibility:auto;contain-intrinsic-size:320px}
+.cover{height:228px;position:relative;background:#f2f2f2;border-bottom:1px solid var(--line);overflow:hidden}
+.cover iframe{width:100%;height:100%;border:0;display:block;pointer-events:none;background:#fff}
+.cover.loading::before{content:"Opening first page...";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#666;background:linear-gradient(180deg,#fbfbfb,#efefef);z-index:1}
+.cover.loading iframe{opacity:0}
+.book-meta{padding:10px}
+.book-title{font-size:13px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+.book-author{font-size:11px;color:#666;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.details-box{border:1px solid var(--line);border-radius:8px;padding:10px;background:#fafafa}
+.line{font-size:12px;margin:6px 0;color:#333}
+.btn{border:none;border-radius:8px;background:#2b2b2b;color:#fff;padding:10px 12px;cursor:pointer;font-size:13px}
+.btn:hover{background:#151515}
+.btn[disabled]{background:#7b7b7b;cursor:not-allowed}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.pager-status{font-size:12px;color:#666}
+.pager-actions{display:flex;gap:8px}
+.ask{margin:10px 0 8px;font-size:13px;font-weight:700}
+.reader-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+.reader-modal.open{display:flex}
+.reader-shell{width:min(1100px,100%);height:min(88vh,900px);background:#fff;border-radius:10px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.reader-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);gap:12px}
+.reader-head h3{margin:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader-frame{width:100%;height:100%;border:0}
+.empty{font-size:12px;color:#666;padding:8px 0}
+@media (max-width:1020px){
+  .frame{grid-template-columns:1fr}
+  .main-grid{grid-template-columns:1fr}
+  .book-grid{max-height:none}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="borrowed.html">Borrowed Books</a>
+      <a class="active" href="#">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a href="reading-history.html">Reading History</a>
+      <a href="fines-dues.html">Fine & Dues</a>
+      <a href="year-resources.html">Year Resources</a>
+      <a href="announcements.html">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="top">
+      <div>
+        <h1 class="title">Textbook Resources</h1>
+        <div class="sub" id="who"></div>
+      </div>
+      <input id="searchInput" class="search" placeholder="Search textbook title or author...">
+    </div>
+
+    <div class="info info-row">
+      <span id="bookCount">Loading textbooks...</span>
+      <span class="spent-pill">Time Spent on Portal: <span id="spentPortal">0h 0m 0s</span></span>
+    </div>
+
+    <div class="main-grid">
+      <section class="books-panel">
+        <h3>Available Textbooks</h3>
+        <div id="bookGrid" class="book-grid"></div>
+        <div class="pager">
+          <div class="pager-status" id="pageStatus"></div>
+          <div class="pager-actions">
+            <button class="btn" id="prevPageBtn" type="button">Previous</button>
+            <button class="btn" id="nextPageBtn" type="button">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="details-panel">
+        <h3>Book Details</h3>
+        <div class="details-box" id="detailsBox">
+          <div class="line"><strong>Title:</strong> <span id="dTitle">Select a book</span></div>
+          <div class="line"><strong>Author:</strong> <span id="dAuthor">-</span></div>
+          <div class="line"><strong>Category:</strong> <span id="dCategory">Textbook</span></div>
+          <div class="line"><strong>File:</strong> <span id="dFile">-</span></div>
+        </div>
+        <div class="ask">Do you want to read this textbook?</div>
+        <button class="btn" id="readBtn" disabled>Read Book</button>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<div class="reader-modal" id="readerModal" role="dialog" aria-modal="true">
+  <div class="reader-shell">
+    <div class="reader-head">
+      <h3 id="readerTitle">Reader</h3>
+      <button class="btn" onclick="closeReader()">Close</button>
+    </div>
+    <iframe class="reader-frame" id="readerFrame" title="Book Reader"></iframe>
+  </div>
+</div>
+
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+const raw = sessionStorage.getItem("libraryUser")
+if(!raw){ window.location.href = "index.html" }
+let currentUser = null
+try{ currentUser = JSON.parse(raw) } catch { window.location.href = "index.html" }
+if(!currentUser || !currentUser.registrationNo){ window.location.href = "index.html" }
+
+const pendingSecondsKey = `pending_seconds_${currentUser.registrationNo}`
+const historyKey = `reading_history_${currentUser.registrationNo}`
+let unsyncedSeconds = 0
+let baseSpentSeconds = 0
+let trackTicker = null
+let trackSyncTimer = null
+let trackSyncInFlight = false
+let lastTickMs = Date.now()
+let tickRemainderMs = 0
+const PAGE_SIZE = 8
+let filteredBooks = []
+let currentPage = 1
+let searchTimer = null
+
+document.getElementById("who").textContent = `${currentUser.fullName || currentUser.name || "Student"} (${currentUser.registrationNo})`
+
+const bookFiles = [
+  "A Textbook on Professional Ethics and Human Values (as Per Anna University Syllabus) (R.S. Naagarazan) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Abraham Silberschatz-Operating System Concepts (9th,2012_12) ( etc.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "An introduction to management science  quantitative approaches to decision making. (David Ray Anderson, Dennis J. Sweeney etc.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Artificial Intelligence (Gerhard Paa├ƒ, Dirk Hecker) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Basic Electrical and Electronics Engineering (D. P. Kothari, I. J. Nagrath) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Calculus (Howard Anton, Irl C. Bivens, Stephen Davis) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Computer Networking A Top-Down Approach (James F. Kurose, Keith W. Ross) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Computer Science and Artificial Intelligence ( etc.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Design and Analysis of Algorithms. A Contemporary Perspective (Sandeep Sen, Amit Kumar) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Digital logic and computer organization (Rajaraman, V, Radhakrishnan, T) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Engineering Chemistry (Mukhopadhyay, Raghupati and Datta, Sriparna) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Engineering graphics (Basant Agrawal C. M. Agrawal) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Engineering Physics (Shatendra Sharma, Jyotsna Sharma) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Environmental Studies (Anil Kumar De, Arnab Kumar De) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Fundamentals of Data Structures in C (Ellis Horowitz, Sartaj Sahni etc.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Fundamentals of Database Management Systems (Mark L. Gillenson) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Handbook of Discrete and Combinatorial Mathematics, Second Edition (Kenneth H. Rosen (Editor-in-Chief)) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "India that is Bharat Coloniality, Civilisation, Constitution (J. Sai Deepak) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Introduction to management science (Taylor, Bernard W.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Linear Algebra (M. Thamban Nair, Arindama Singh) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Machine Learning Mastery with Python Understand Your Data, Create Accurate Models and Work Projects End-To-End (Jason Brownlee) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Marketing management ( etc.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Object-Oriented Programming With Java (Barry Holmes, Daniel T. Joyce) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Probability Theory A First Course in Probability Theory and Statistics (Werner Linde) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Programming in C (E. Balagurusamy) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Python Programming. Python Programming for Beginners, Python Programming for Intermediates (Adam Stewart) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "The┬áConstitution of India (Constituent Assembly of India) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf",
+  "Universal Human Values (Lalitha Ramakrishnan etc.) (z-library.sk, 1lib.sk, z-lib.sk)-compressed.pdf"
+]
+
+const books = bookFiles.map((fileName, index) => {
+  const path = `Books/${encodeURIComponent(fileName)}`
+  return {
+    id:index + 1,
+    fileName,
+    path,
+    title:cleanTitle(fileName),
+    author:extractAuthor(fileName)
+  }
+})
+
+let selectedBook = null
+let previewObserver = null
+function getServerSpentSeconds(user){
+  const direct = Number(user?.spentSeconds)
+  if(Number.isFinite(direct) && direct >= 0){
+    return Math.round(direct)
+  }
+  return Math.round((Number(user?.spentHours) || 0) * 3600)
+}
+
+function formatTimeSpent(totalSeconds){
+  const sec = Math.max(0, Math.round(totalSeconds))
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  const s = sec % 60
+  return `${h}h ${m}m ${s}s`
+}
+
+function renderLiveSpent(){
+  const el = document.getElementById("spentPortal")
+  if(el){
+    el.innerText = formatTimeSpent(baseSpentSeconds + unsyncedSeconds)
+  }
+}
+
+function loadPendingSeconds(){
+  const rawPending = sessionStorage.getItem(pendingSecondsKey)
+  const value = Number(rawPending)
+  if(Number.isFinite(value) && value > 0){
+    return Math.round(value)
+  }
+  return 0
+}
+
+function persistPendingSeconds(){
+  const safe = Math.max(0, Math.round(unsyncedSeconds))
+  if(safe === 0){
+    sessionStorage.removeItem(pendingSecondsKey)
+    return
+  }
+  sessionStorage.setItem(pendingSecondsKey, String(safe))
+}
+
+function updateSessionUserSpent(secondsDelta){
+  if(!Number.isFinite(secondsDelta) || secondsDelta <= 0){
+    return
+  }
+  const prevSeconds = getServerSpentSeconds(currentUser)
+  const nextSeconds = prevSeconds + Math.round(secondsDelta)
+  currentUser.spentSeconds = nextSeconds
+  currentUser.spentHours = nextSeconds / 3600
+  sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+}
+
+function cleanTitle(name){
+  return name
+    .replace(/\.pdf$/i, "")
+    .replace(/-compressed$/i, "")
+    .replace(/\s*\(z-library\.sk, 1lib\.sk, z-lib\.sk\)\s*/ig, "")
+    .replace(/\s*\(\s*etc\.\s*\)\s*/ig, "")
+    .replace(/├ƒ/g, "ß")
+    .replace(/┬á/g, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim()
+}
+
+function extractAuthor(name){
+  const all = [...name.matchAll(/\(([^()]{2,120})\)/g)].map(m => m[1].trim())
+  const filtered = all.filter(v => {
+    const t = v.toLowerCase()
+    return !t.includes("z-library") && !t.includes("1lib") && !t.includes("z-lib") && t !== "etc."
+  })
+  return filtered.length ? filtered[filtered.length - 1] : "Unknown"
+}
+
+function renderBooks(items){
+  const grid = document.getElementById("bookGrid")
+  filteredBooks = items
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE))
+  if(currentPage > totalPages){
+    currentPage = totalPages
+  }
+  const pageItems = items.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  if(!items.length){
+    grid.innerHTML = '<div class="empty">No textbooks match your search.</div>'
+    updatePager(0, 0)
+    return
+  }
+
+  grid.innerHTML = pageItems.map(book => {
+    const thumbSrc = `${book.path}#page=1&view=FitH&toolbar=0&navpanes=0&scrollbar=0&zoom=page-fit`
+    const active = selectedBook && selectedBook.id === book.id ? "active" : ""
+    return `
+      <article class="book-card ${active}" data-id="${book.id}">
+        <div class="cover loading">
+          <iframe data-src="${thumbSrc}" title="${book.title} first page preview" loading="eager"></iframe>
+        </div>
+        <div class="book-meta">
+          <div class="book-title">${book.title}</div>
+          <div class="book-author">${book.author}</div>
+        </div>
+      </article>
+    `
+  }).join("")
+  updatePager(items.length, totalPages)
+
+  grid.querySelectorAll(".book-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = Number(card.getAttribute("data-id"))
+      const book = books.find(b => b.id === id)
+      if(book){
+        selectedBook = book
+        updateDetails(book)
+        setActiveCard(id)
+      }
+    })
+  })
+
+  initPreviewLoad()
+}
+
+function updatePager(totalItems, totalPages){
+  document.getElementById("pageStatus").textContent = totalItems
+    ? `Showing ${Math.min(totalItems, ((currentPage - 1) * PAGE_SIZE) + 1)}-${Math.min(totalItems, currentPage * PAGE_SIZE)} of ${totalItems}`
+    : "No textbooks to show"
+  document.getElementById("prevPageBtn").disabled = currentPage <= 1
+  document.getElementById("nextPageBtn").disabled = currentPage >= totalPages
+}
+
+function updateDetails(book){
+  document.getElementById("dTitle").textContent = book.title
+  document.getElementById("dAuthor").textContent = book.author
+  document.getElementById("dFile").textContent = book.fileName
+  document.getElementById("readBtn").disabled = false
+}
+
+function filterBooks(term){
+  const q = String(term || "").trim().toLowerCase()
+  if(!q){ return books }
+  return books.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q))
+}
+
+function openReader(book){
+  pushReadingHistory(book)
+  const frame = document.getElementById("readerFrame")
+  const title = document.getElementById("readerTitle")
+  frame.src = `${book.path}#toolbar=1&navpanes=0&view=FitH`
+  title.textContent = book.title
+  document.getElementById("readerModal").classList.add("open")
+}
+
+function getReadingHistory(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(historyKey) || "[]")
+    return Array.isArray(arr) ? arr : []
+  } catch {
+    return []
+  }
+}
+
+function saveReadingHistory(items){
+  localStorage.setItem(historyKey, JSON.stringify(items))
+}
+
+function pushReadingHistory(book){
+  if(!book || !book.path){ return }
+  const items = getReadingHistory()
+  items.unshift({
+    title: book.title,
+    author: book.author,
+    source: "Textbook",
+    fileName: book.fileName,
+    path: book.path,
+    openedAt: new Date().toISOString()
+  })
+  const capped = items.slice(0, 120)
+  saveReadingHistory(capped)
+}
+
+function setActiveCard(bookId){
+  document.querySelectorAll(".book-card").forEach(card => {
+    const id = Number(card.getAttribute("data-id"))
+    card.classList.toggle("active", id === bookId)
+  })
+}
+
+function initPreviewLoad(){
+  if(previewObserver){
+    previewObserver.disconnect()
+  }
+  previewObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting){ return }
+      const iframe = entry.target
+      const src = iframe.getAttribute("data-src")
+      if(src && !iframe.src){
+        iframe.src = src
+      }
+      iframe.addEventListener("load", () => {
+        const cover = iframe.closest(".cover")
+        if(cover){
+          cover.classList.remove("loading")
+        }
+      }, { once:true })
+      previewObserver.unobserve(iframe)
+    })
+  }, { root:document.getElementById("bookGrid"), rootMargin:"120px 0px" })
+
+  document.querySelectorAll("#bookGrid iframe[data-src]").forEach(iframe => {
+    previewObserver.observe(iframe)
+  })
+}
+
+function applyElapsedMs(elapsedMs){
+  if(!Number.isFinite(elapsedMs) || elapsedMs <= 0){ return }
+  tickRemainderMs += elapsedMs
+  const wholeSeconds = Math.floor(tickRemainderMs / 1000)
+  if(wholeSeconds <= 0){ return }
+  tickRemainderMs -= wholeSeconds * 1000
+  unsyncedSeconds += wholeSeconds
+  persistPendingSeconds()
+  renderLiveSpent()
+}
+
+function captureElapsedNow(){
+  const now = Date.now()
+  const elapsed = now - lastTickMs
+  lastTickMs = now
+  applyElapsedMs(elapsed)
+}
+
+async function syncTrackedTime(keepaliveMode = false){
+  captureElapsedNow()
+  if(unsyncedSeconds <= 0){ return }
+  if(trackSyncInFlight){ return }
+  trackSyncInFlight = true
+  const secondsToSync = unsyncedSeconds
+  try{
+    const response = await fetch(`${API_BASE}/track-time`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: keepaliveMode,
+      body: JSON.stringify({
+        registrationNo: currentUser.registrationNo,
+        secondsSpent: secondsToSync
+      })
+    })
+    if(!response.ok){ throw new Error("time-sync failed") }
+    baseSpentSeconds += secondsToSync
+    unsyncedSeconds -= secondsToSync
+    if(unsyncedSeconds < 0){ unsyncedSeconds = 0 }
+    updateSessionUserSpent(secondsToSync)
+    persistPendingSeconds()
+    renderLiveSpent()
+    if(!keepaliveMode){
+      fetchSpentSnapshot()
+    }
+  } catch {
+    unsyncedSeconds = Math.max(unsyncedSeconds, secondsToSync)
+    persistPendingSeconds()
+  } finally {
+    trackSyncInFlight = false
+  }
+}
+
+function flushUnsyncedToSession(){
+  captureElapsedNow()
+  persistPendingSeconds()
+}
+
+function startRealtimeTracking(){
+  lastTickMs = Date.now()
+  tickRemainderMs = 0
+  trackTicker = setInterval(captureElapsedNow, 1000)
+  trackSyncTimer = setInterval(syncTrackedTime, 15000)
+}
+
+function stopRealtimeTracking(){
+  captureElapsedNow()
+  persistPendingSeconds()
+  if(trackTicker){ clearInterval(trackTicker) }
+  if(trackSyncTimer){ clearInterval(trackSyncTimer) }
+}
+
+async function fetchSpentSnapshot(){
+  try{
+    const res = await fetch(`${API_BASE}/dashboard/${encodeURIComponent(currentUser.registrationNo)}`)
+    const data = await res.json().catch(() => ({}))
+    if(res.ok && data.user){
+      currentUser = data.user
+      baseSpentSeconds = getServerSpentSeconds(data.user)
+      sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+      renderLiveSpent()
+    }
+  } catch {}
+}
+
+function closeReader(){
+  document.getElementById("readerModal").classList.remove("open")
+  document.getElementById("readerFrame").src = ""
+}
+
+async function logout(e){
+  if(e){ e.preventDefault() }
+  stopRealtimeTracking()
+  await syncTrackedTime(true)
+  flushUnsyncedToSession()
+  sessionStorage.removeItem("libraryUser")
+  window.location.href = "index.html"
+}
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  window.clearTimeout(searchTimer)
+  searchTimer = window.setTimeout(() => {
+    currentPage = 1
+    renderBooks(filterBooks(e.target.value))
+  }, 120)
+})
+
+document.getElementById("prevPageBtn").addEventListener("click", () => {
+  if(currentPage <= 1){ return }
+  currentPage -= 1
+  renderBooks(filteredBooks)
+  document.getElementById("bookGrid").scrollTop = 0
+})
+
+document.getElementById("nextPageBtn").addEventListener("click", () => {
+  const totalPages = Math.max(1, Math.ceil(filteredBooks.length / PAGE_SIZE))
+  if(currentPage >= totalPages){ return }
+  currentPage += 1
+  renderBooks(filteredBooks)
+  document.getElementById("bookGrid").scrollTop = 0
+})
+
+document.getElementById("readBtn").addEventListener("click", () => {
+  if(selectedBook){ openReader(selectedBook) }
+})
+
+document.getElementById("readerModal").addEventListener("click", e => {
+  if(e.target.id === "readerModal"){ closeReader() }
+})
+
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){ closeReader() }
+})
+
+document.getElementById("bookCount").textContent = `${books.length} textbooks found in your Books library.`
+baseSpentSeconds = getServerSpentSeconds(currentUser)
+unsyncedSeconds = loadPendingSeconds()
+renderLiveSpent()
+fetchSpentSnapshot()
+startRealtimeTracking()
+window.addEventListener("pagehide", flushUnsyncedToSession)
+window.addEventListener("beforeunload", flushUnsyncedToSession)
+document.querySelectorAll(".menu a[href]").forEach(link => {
+  link.addEventListener("click", async (event) => {
+    const href = link.getAttribute("href")
+    if(!href || href === "#" || href.toLowerCase().startsWith("javascript:")){ return }
+    event.preventDefault()
+    stopRealtimeTracking()
+    await syncTrackedTime(true)
+    flushUnsyncedToSession()
+    window.location.href = href
+  })
+})
+filteredBooks = books
+renderBooks(books)
+</script>
+</body>
+</html>

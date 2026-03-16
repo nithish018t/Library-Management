@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year Resources</title>
+<style>
+:root{
+  --line:#e4e4e4;
+  --panel:#ffffff;
+  --text:#232323;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 14% 14%, rgba(95,144,215,.28), transparent 28%),
+    radial-gradient(circle at 86% 18%, rgba(242,186,122,.22), transparent 24%),
+    radial-gradient(circle at 78% 82%, rgba(102,182,142,.22), transparent 24%),
+    linear-gradient(160deg,#ebf0f8 0%,#f5ede2 48%,#e6f1e7 100%);
+  min-height:100vh;
+  padding:22px;
+  display:flex;
+}
+.frame{
+  width:min(1280px,100%);
+  margin:0 auto;
+  background:rgba(255,255,255,.94);
+  border:1px solid #ddd;
+  border-radius:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.12);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:230px 1fr;
+  min-height:calc(100vh - 44px);
+}
+.sidebar{background:linear-gradient(180deg,#f0f0f0,#ebebeb);border-right:1px solid var(--line);padding:20px 14px}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{padding:18px;display:grid;grid-template-rows:auto auto 1fr;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:#666}
+.search{border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:320px;max-width:100%;font-size:13px;background:#fff}
+.info{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;color:#4a4a4a}
+.info-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.spent-pill{display:inline-block;background:#202020;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
+.main-grid{display:grid;grid-template-columns:2fr 1fr;gap:10px;min-height:0}
+.folders-panel,.details-panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-height:0}
+.folders-panel h3,.details-panel h3{margin:0 0 8px}
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;max-height:540px;overflow:auto;padding-right:4px}
+.folder-card{border:1px solid var(--line);border-radius:10px;background:#fafafa;cursor:pointer;display:flex;flex-direction:column;gap:10px;padding:14px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.folder-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.folder-card.active{border-color:#2b2b2b;box-shadow:0 0 0 2px rgba(0,0,0,.08)}
+.folder-mark{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#243b5c,#3e6694);color:#fff;font-size:20px;font-weight:700}
+.folder-title{font-size:15px;font-weight:700;line-height:1.3}
+.folder-meta{font-size:12px;color:#666}
+.folder-hint{font-size:12px;color:#5d5d5d;line-height:1.45}
+.details-box{border:1px solid var(--line);border-radius:8px;padding:10px;background:#fafafa}
+.line{font-size:12px;margin:6px 0;color:#333}
+.btn{border:none;border-radius:8px;background:#2b2b2b;color:#fff;padding:10px 12px;cursor:pointer;font-size:13px}
+.btn:hover{background:#151515}
+.btn[disabled]{background:#7b7b7b;cursor:not-allowed}
+.file-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:300px;overflow:auto;padding-right:4px}
+.file-item{border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.file-copy{min-width:0}
+.file-name{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-meta{font-size:11px;color:#666;margin-top:4px}
+.file-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:none;border-radius:8px;background:#2b2b2b;color:#fff;padding:9px 12px;font-size:12px;white-space:nowrap}
+.file-link:hover{background:#151515}
+.empty{font-size:12px;color:#666;padding:8px 0}
+.ask{margin:10px 0 8px;font-size:13px;font-weight:700}
+@media (max-width:1020px){
+  .frame{grid-template-columns:1fr}
+  .main-grid{grid-template-columns:1fr}
+  .folder-grid{max-height:none}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="borrowed.html">Borrowed Books</a>
+      <a href="textbooks.html">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a href="reading-history.html">Reading History</a>
+      <a href="fines-dues.html">Fine & Dues</a>
+      <a class="active" href="#">Year Resources</a>
+      <a href="announcements.html">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="top">
+      <div>
+        <h1 class="title">Year Resources</h1>
+        <div class="sub" id="who"></div>
+      </div>
+      <input id="searchInput" class="search" placeholder="Search question paper code or file...">
+    </div>
+
+    <div class="info info-row">
+      <span id="folderCount">Loading question paper folders...</span>
+      <span class="spent-pill">Time Spent on Portal: <span id="spentPortal">0h 0m 0s</span></span>
+    </div>
+
+    <div class="main-grid">
+      <section class="folders-panel">
+        <h3>Question Paper Folders</h3>
+        <div id="folderGrid" class="folder-grid"></div>
+      </section>
+
+      <aside class="details-panel">
+        <h3>Folder Details</h3>
+        <div class="details-box">
+          <div class="line"><strong>Folder:</strong> <span id="dFolder">Select a folder</span></div>
+          <div class="line"><strong>Type:</strong> <span id="dType">Question Papers</span></div>
+          <div class="line"><strong>Files:</strong> <span id="dCount">-</span></div>
+          <div class="line"><strong>Formats:</strong> <span id="dFormats">-</span></div>
+        </div>
+        <div class="ask">Open any paper from the selected folder.</div>
+        <button class="btn" id="openFolderBtn" disabled type="button">Open First File</button>
+        <div class="file-list" id="fileList"></div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+const raw = sessionStorage.getItem("libraryUser")
+if(!raw){ window.location.href = "index.html" }
+let currentUser = null
+try{ currentUser = JSON.parse(raw) } catch { window.location.href = "index.html" }
+if(!currentUser || !currentUser.registrationNo){ window.location.href = "index.html" }
+
+const pendingSecondsKey = `pending_seconds_${currentUser.registrationNo}`
+const historyKey = `reading_history_${currentUser.registrationNo}`
+let unsyncedSeconds = 0
+let baseSpentSeconds = 0
+let trackTicker = null
+let trackSyncTimer = null
+let trackSyncInFlight = false
+let lastTickMs = Date.now()
+let tickRemainderMs = 0
+let selectedFolder = null
+
+document.getElementById("who").textContent = `${currentUser.fullName || currentUser.name || "Student"} (${currentUser.registrationNo})`
+
+const questionPaperFolders = [
+  { code:"Digital Logic and Computer Organization", files:["Digital Logic and Computer Organization-1.doc","Digital Logic and Computer Organization-3.docx","Digital Logic and Computer Organization-5.docx"] },
+  { code:"BIG DATA ANALYTICS", files:["BIG DATA ANALYTICS-1.docx"] },
+  { code:"Optimization Techniques", files:["Optimization Techniques-1.docx","Optimization Techniques-2.docx"] },
+  { code:"AGRICULTURAL MICROBIOLOGY", files:["AGRICULTURAL MICROBIOLOGY-2.doc","AGRICULTURAL MICROBIOLOGY-7.docx"] },
+  { code:"Python Programming", files:["Python Programming-2 (1).docx","Python Programming-2.docx"] },
+  { code:"Database Management Systems", files:["Database Management Systems-10.docx","Database Management Systems-4 (1).doc","Database Management Systems-4.doc","Database Management Systems-7.docx","Database Management Systems-8 (1).docx","Database Management Systems-8.docx","Database Management Systems-9.docx"] },
+  { code:"Object-Oriented Programming through JAVA", files:["Object-Oriented Programming through JAVA.docx","Object-Oriented Programming through JAVA-3.doc","Object-Oriented Programming through JAVA-5.doc","Object-Oriented Programming through JAVA-5.docx","Object-Oriented Programming through JAVA-9 (1).docx","Object-Oriented Programming through JAVA-9.docx"] },
+  { code:"Computer Networks", files:["Computer Networks-1.doc","Computer Networks-2.docx","Computer Networks-6 (1).doc","Computer Networks-6.doc"] },
+  { code:"COMPUTER ARCHITECTURE AND ORGANIZATION", files:["COMPUTER ARCHITECTURE AND ORGANIZATION-3.docx","COMPUTER ARCHITECTURE AND ORGANIZATION-4.docx","COMPUTER ARCHITECTURE AND ORGANIZATION-5.docx","COMPUTER ARCHITECTURE AND ORGANIZATION-6.docx"] },
+  { code:"Design and Analysis of Algorithms", files:["Design and Analysis of Algorithms-1.doc","Design and Analysis of Algorithms-2.docx","Design and Analysis of Algorithms-3.docx","Design and Analysis of Algorithms-5.docx","Design and Analysis of Algorithms-6.docx"] },
+  { code:"Operating Systems", files:["Operating Systems-2.docx","Operating Systems-3.docx","Operating Systems-4.docx","Operating Systems-7.docx","Operating Systems-8.docx"] },
+  { code:"THEORY OF COMPUTATION", files:["THEORY OF COMPUTATION-5.docx","THEORY OF COMPUTATION-6.docx"] },
+  { code:"INTRODUCTION TO ARTIFICIAL INTELLIGENCE", files:["INTRODUCTION TO ARTIFICIAL INTELLIGENCE-1.doc","INTRODUCTION TO ARTIFICIAL INTELLIGENCE-3.docx","INTRODUCTION TO ARTIFICIAL INTELLIGENCE-5.docx","INTRODUCTION TO ARTIFICIAL INTELLIGENCE-6.docx"] },
+  { code:"COMPILER DESIGN", files:["COMPILER DESIGN-5.docx","COMPILER DESIGN-6.docx"] },
+  { code:"Web Technologies", files:["Web Technologies-2.odt","Web Technologies-4.doc","Web Technologies-6.odt"] },
+  { code:"SOFTWARE ENGINEERING", files:["SOFTWARE ENGINEERING-1.doc","SOFTWARE ENGINEERING-2.doc"] },
+  { code:"CRYPTOGRAPHY & NETWORK SECURITY", files:["CRYPTOGRAPHY & NETWORK SECURITY-1.docx","CRYPTOGRAPHY & NETWORK SECURITY-2 (1).docx","CRYPTOGRAPHY & NETWORK SECURITY-2 (2).docx","CRYPTOGRAPHY & NETWORK SECURITY-2.docx"] },
+  { code:"Advanced Data Structures", files:["Advanced Data Structures-1.docx"] },
+  { code:"Advanced JAVA Programming", files:["Advanced JAVA Programming-1.docx","Advanced JAVA Programming-3.docx"] },
+  { code:"DEEP LEARNING", files:["DEEP LEARNING-1.docx","DEEP LEARNING-2.docx"] },
+  { code:"DIGITAL IMAGE PROCESSING", files:["DIGITAL IMAGE PROCESSING-1.doc","DIGITAL IMAGE PROCESSING-2.doc","DIGITAL IMAGE PROCESSING-3.doc"] },
+  { code:"Machine Learning", files:["Machine Learning-1.docx","Machine Learning-2.docx","Machine Learning-3.doc"] },
+  { code:"Network Theory", files:["Network Theory-2.doc"] },
+  { code:"Semiconductor Physics and Devices", files:["Semiconductor Physics and Devices-2.docx"] },
+  { code:"Analog Circuits", files:["Analog Circuits-1.pdf"] },
+  { code:"Probability Theory and Stochastic Processes", files:["Probability Theory and Stochastic Processes-3.docx","Probability Theory and Stochastic Processes-5.docx"] },
+  { code:"Digital Electronics", files:["Digital Electronics-1.doc"] },
+  { code:"Signals and Systems", files:["Signals and Systems-1.pdf","Signals and Systems-3.docx"] },
+  { code:"Basics of Electrical and Electronics Engineering", files:["Basics of Electrical and Electronics Engineering-13.docx","Basics of Electrical and Electronics Engineering-14.docx"] },
+  { code:"Technical English Communication", files:["Technical English Communication-11.docx","Technical English Communication-12.docx","Technical English Communication-13.docx","Technical English Communication-9.docx"] },
+  { code:"ENGINEERING MECHANICS", files:["ENGINEERING MECHANICS-2.doc","ENGINEERING MECHANICS-3.doc"] },
+  { code:"MATERIALS SCIENCE & METALLURGY", files:["MATERIALS SCIENCE & METALLURGY-1.docx","MATERIALS SCIENCE & METALLURGY-2.docx","MATERIALS SCIENCE & METALLURGY-3.doc"] },
+  { code:"APPLIED THERMODYNAMICS", files:["APPLIED THERMODYNAMICS-1.docx","APPLIED THERMODYNAMICS-3.docx"] },
+  { code:"HEAT TRANSFER", files:["HEAT TRANSFER-1.doc","HEAT TRANSFER-2.doc"] },
+  { code:"3D PRINTING & DESIGN", files:["3D PRINTING & DESIGN-1.docx","3D PRINTING & DESIGN-3.docx","3D PRINTING & DESIGN-4.docx"] },
+  { code:"BIOMECHANICS", files:["BIOMECHANICS-1.docx"] },
+  { code:"Management Science", files:["Management Science-10.docx","Management Science-11.docx","Management Science-12.docx","Management Science-9.docx"] },
+  { code:"ELEMENTARY MATHEMATICS", files:["ELEMENTARY MATHEMATICS-1.doc","ELEMENTARY MATHEMATICS-5.docx"] },
+  { code:"Linear Algebra", files:["Linear Algebra-2.docx","Linear Algebra-4.doc","Linear Algebra-6.docx","Linear Algebra-8.docx","Linear Algebra-9.docx"] },
+  { code:"Linear Algebra and Ordinary Differential Equations", files:["Linear Algebra and Ordinary Differential Equations-7.docx"] },
+  { code:"ALGEBRA", files:["ALGEBRA-3.doc","ALGEBRA-5 (1).doc","ALGEBRA-5 (2).doc","ALGEBRA-5.doc","ALGEBRA-6.doc","ALGEBRA-7.docx","ALGEBRA-8.doc"] },
+  { code:"Discrete Mathematical Structures", files:["Discrete Mathematical Structures-1.doc","Discrete Mathematical Structures-10.docx","Discrete Mathematical Structures-5.docx","Discrete Mathematical Structures-7.docx","Discrete Mathematical Structures-8.docx","Discrete Mathematical Structures-9.docx"] },
+  { code:"Applied Physics", files:["Applied Physics-5.docx","Applied Physics-6.docx"] },
+  { code:"ENGINEERING PHYSICS", files:["ENGINEERING PHYSICS-1.doc","ENGINEERING PHYSICS-4 (1).doc","ENGINEERING PHYSICS-4.doc"] },
+  { code:"Physics for Electronic Engineers", files:["Physics for Electronic Engineers.pdf","Physics for Electronic Engineers-1.pdf"] },
+  { code:"Semiconductor Physics and Electromagnetics", files:["Semiconductor Physics and Electromagnetics-11 (1).docx","Semiconductor Physics and Electromagnetics-11.docx","Semiconductor Physics and Electromagnetics-12.docx","Semiconductor Physics and Electromagnetics-13.docx","Semiconductor Physics and Electromagnetics-14.docx","Semiconductor Physics and Electromagnetics-6.docx","Semiconductor Physics and Electromagnetics-8.docx","Semiconductor Physics and Electromagnetics-9 (1).docx","Semiconductor Physics and Electromagnetics-9.docx"] },
+  { code:"Constitution of India", files:["Constitution of India-10.docx","Constitution of India-6.docx","Constitution of India-8.docx"] },
+  { code:"Programming in C", files:["Programming in C-3.doc","Programming in C-5.doc","Programming in C-9.docx"] },
+  { code:"PROBLEM SOLVING THROUGH PROGRAMMING", files:["PROBLEM SOLVING THROUGH PROGRAMMING-2.docx","PROBLEM SOLVING THROUGH PROGRAMMING-3.docx","PROBLEM SOLVING THROUGH PROGRAMMING-4.docx","PROBLEM SOLVING THROUGH PROGRAMMING-5 (1).docx","PROBLEM SOLVING THROUGH PROGRAMMING-5.docx"] },
+  { code:"Data Structures", files:["Data Structures-11.docx","Data Structures-13.docx","Data Structures-5.doc","Data Structures-9.docx"] },
+  { code:"Data Structures using Python", files:["Data Structures using Python-1.doc"] },
+  { code:"Advanced Coding Competency", files:["Advanced Coding Competency-1.docx"] },
+  { code:"ADVANCED INSTRUMENTATION TECHNIQUES may 2025", files:["ADVANCED INSTRUMENTATION TECHNIQUES may 2025.pdf"] }
+].map((folder, index) => ({
+  id:index + 1,
+  ...folder,
+  files:folder.files.map(fileName => ({
+    fileName,
+    path:`Question Papers/${encodeURIComponent(folder.code)}/${encodeURIComponent(fileName)}`,
+    ext:getExtension(fileName)
+  }))
+}))
+
+let filteredFolders = questionPaperFolders
+
+function getServerSpentSeconds(user){
+  const direct = Number(user?.spentSeconds)
+  if(Number.isFinite(direct) && direct >= 0){
+    return Math.round(direct)
+  }
+  return Math.round((Number(user?.spentHours) || 0) * 3600)
+}
+
+function formatTimeSpent(totalSeconds){
+  const sec = Math.max(0, Math.round(totalSeconds))
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  const s = sec % 60
+  return `${h}h ${m}m ${s}s`
+}
+
+function renderLiveSpent(){
+  const el = document.getElementById("spentPortal")
+  if(el){
+    el.innerText = formatTimeSpent(baseSpentSeconds + unsyncedSeconds)
+  }
+}
+
+function loadPendingSeconds(){
+  const rawPending = sessionStorage.getItem(pendingSecondsKey)
+  const value = Number(rawPending)
+  if(Number.isFinite(value) && value > 0){
+    return Math.round(value)
+  }
+  return 0
+}
+
+function persistPendingSeconds(){
+  const safe = Math.max(0, Math.round(unsyncedSeconds))
+  if(safe === 0){
+    sessionStorage.removeItem(pendingSecondsKey)
+    return
+  }
+  sessionStorage.setItem(pendingSecondsKey, String(safe))
+}
+
+function updateSessionUserSpent(secondsDelta){
+  if(!Number.isFinite(secondsDelta) || secondsDelta <= 0){
+    return
+  }
+  const prevSeconds = getServerSpentSeconds(currentUser)
+  const nextSeconds = prevSeconds + Math.round(secondsDelta)
+  currentUser.spentSeconds = nextSeconds
+  currentUser.spentHours = nextSeconds / 3600
+  sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+}
+
+function getExtension(fileName){
+  const dotIndex = fileName.lastIndexOf(".")
+  return dotIndex === -1 ? "file" : fileName.slice(dotIndex + 1).toUpperCase()
+}
+
+function getFolderFormats(folder){
+  return [...new Set(folder.files.map(file => file.ext))].join(", ")
+}
+
+function getFolderMark(code){
+  return String(code || "QP").replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase() || "QP"
+}
+
+function renderFolders(items){
+  const grid = document.getElementById("folderGrid")
+  if(!items.length){
+    grid.innerHTML = '<div class="empty">No question paper folders match your search.</div>'
+    document.getElementById("folderCount").textContent = "No folders found."
+    clearDetails()
+    return
+  }
+
+  document.getElementById("folderCount").textContent = `${items.length} question paper folders available in Year Resources.`
+  grid.innerHTML = items.map(folder => {
+    const active = selectedFolder && selectedFolder.id === folder.id ? "active" : ""
+    return `
+      <article class="folder-card ${active}" data-id="${folder.id}">
+        <div class="folder-mark">${getFolderMark(folder.code)}</div>
+        <div class="folder-title">${folder.code}</div>
+        <div class="folder-meta">${folder.files.length} file${folder.files.length === 1 ? "" : "s"} • ${getFolderFormats(folder)}</div>
+        <div class="folder-hint">Grouped question papers for the same subject code.</div>
+      </article>
+    `
+  }).join("")
+
+  grid.querySelectorAll(".folder-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = Number(card.getAttribute("data-id"))
+      const folder = questionPaperFolders.find(item => item.id === id)
+      if(folder){
+        selectedFolder = folder
+        updateDetails(folder)
+        setActiveCard(id)
+      }
+    })
+  })
+
+  if(selectedFolder){
+    const stillVisible = items.some(item => item.id === selectedFolder.id)
+    if(!stillVisible){
+      selectedFolder = items[0]
+    }
+  }
+
+  if(!selectedFolder){
+    selectedFolder = items[0]
+  }
+
+  updateDetails(selectedFolder)
+  setActiveCard(selectedFolder.id)
+}
+
+function setActiveCard(folderId){
+  document.querySelectorAll(".folder-card").forEach(card => {
+    const id = Number(card.getAttribute("data-id"))
+    card.classList.toggle("active", id === folderId)
+  })
+}
+
+function clearDetails(){
+  document.getElementById("dFolder").textContent = "Select a folder"
+  document.getElementById("dCount").textContent = "-"
+  document.getElementById("dFormats").textContent = "-"
+  document.getElementById("openFolderBtn").disabled = true
+  document.getElementById("fileList").innerHTML = ""
+}
+
+function updateDetails(folder){
+  if(!folder){
+    clearDetails()
+    return
+  }
+  document.getElementById("dFolder").textContent = folder.code
+  document.getElementById("dCount").textContent = `${folder.files.length} file${folder.files.length === 1 ? "" : "s"}`
+  document.getElementById("dFormats").textContent = getFolderFormats(folder)
+  document.getElementById("openFolderBtn").disabled = folder.files.length === 0
+  document.getElementById("fileList").innerHTML = folder.files.map(file => `
+    <div class="file-item">
+      <div class="file-copy">
+        <div class="file-name" title="${file.fileName}">${file.fileName}</div>
+        <div class="file-meta">${file.ext} file</div>
+      </div>
+      <a class="file-link" href="${file.path}" target="_blank" rel="noopener">Open File</a>
+    </div>
+  `).join("")
+}
+
+function filterFolders(term){
+  const q = String(term || "").trim().toLowerCase()
+  if(!q){ return questionPaperFolders }
+  return questionPaperFolders.filter(folder => {
+    if(folder.code.toLowerCase().includes(q)){ return true }
+    return folder.files.some(file => file.fileName.toLowerCase().includes(q) || file.ext.toLowerCase().includes(q))
+  })
+}
+
+function pushReadingHistory(folder, file){
+  if(!folder || !file){ return }
+  try{
+    const current = JSON.parse(localStorage.getItem(historyKey) || "[]")
+    const list = Array.isArray(current) ? current : []
+    list.unshift({
+      title: `${folder.code} - ${file.fileName}`,
+      author: folder.code,
+      source: "Year Resources",
+      fileName: file.fileName,
+      path: file.path,
+      openedAt: new Date().toISOString()
+    })
+    localStorage.setItem(historyKey, JSON.stringify(list.slice(0, 120)))
+  } catch {}
+}
+
+function openFile(file){
+  if(!selectedFolder || !file){ return }
+  pushReadingHistory(selectedFolder, file)
+  window.open(file.path, "_blank", "noopener")
+}
+
+function applyElapsedMs(elapsedMs){
+  if(!Number.isFinite(elapsedMs) || elapsedMs <= 0){ return }
+  tickRemainderMs += elapsedMs
+  const wholeSeconds = Math.floor(tickRemainderMs / 1000)
+  if(wholeSeconds <= 0){ return }
+  tickRemainderMs -= wholeSeconds * 1000
+  unsyncedSeconds += wholeSeconds
+  persistPendingSeconds()
+  renderLiveSpent()
+}
+
+function captureElapsedNow(){
+  const now = Date.now()
+  const elapsed = now - lastTickMs
+  lastTickMs = now
+  applyElapsedMs(elapsed)
+}
+
+async function syncTrackedTime(keepaliveMode = false){
+  captureElapsedNow()
+  if(unsyncedSeconds <= 0){ return }
+  if(trackSyncInFlight){ return }
+  trackSyncInFlight = true
+  const secondsToSync = unsyncedSeconds
+  try{
+    const response = await fetch(`${API_BASE}/track-time`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: keepaliveMode,
+      body: JSON.stringify({
+        registrationNo: currentUser.registrationNo,
+        secondsSpent: secondsToSync
+      })
+    })
+    if(!response.ok){ throw new Error("time-sync failed") }
+    baseSpentSeconds += secondsToSync
+    unsyncedSeconds -= secondsToSync
+    if(unsyncedSeconds < 0){ unsyncedSeconds = 0 }
+    updateSessionUserSpent(secondsToSync)
+    persistPendingSeconds()
+    renderLiveSpent()
+    if(!keepaliveMode){
+      fetchSpentSnapshot()
+    }
+  } catch {
+    unsyncedSeconds = Math.max(unsyncedSeconds, secondsToSync)
+    persistPendingSeconds()
+  } finally {
+    trackSyncInFlight = false
+  }
+}
+
+function flushUnsyncedToSession(){
+  captureElapsedNow()
+  persistPendingSeconds()
+}
+
+function startRealtimeTracking(){
+  lastTickMs = Date.now()
+  tickRemainderMs = 0
+  trackTicker = setInterval(captureElapsedNow, 1000)
+  trackSyncTimer = setInterval(syncTrackedTime, 15000)
+}
+
+function stopRealtimeTracking(){
+  captureElapsedNow()
+  persistPendingSeconds()
+  if(trackTicker){ clearInterval(trackTicker) }
+  if(trackSyncTimer){ clearInterval(trackSyncTimer) }
+}
+
+async function fetchSpentSnapshot(){
+  try{
+    const res = await fetch(`${API_BASE}/dashboard/${encodeURIComponent(currentUser.registrationNo)}`)
+    const data = await res.json().catch(() => ({}))
+    if(res.ok && data.user){
+      currentUser = data.user
+      baseSpentSeconds = getServerSpentSeconds(data.user)
+      sessionStorage.setItem("libraryUser", JSON.stringify(currentUser))
+      renderLiveSpent()
+    }
+  } catch {}
+}
+
+async function logout(e){
+  if(e){ e.preventDefault() }
+  stopRealtimeTracking()
+  await syncTrackedTime(true)
+  flushUnsyncedToSession()
+  sessionStorage.removeItem("libraryUser")
+  window.location.href = "index.html"
+}
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  filteredFolders = filterFolders(e.target.value)
+  renderFolders(filteredFolders)
+})
+
+document.getElementById("openFolderBtn").addEventListener("click", () => {
+  if(selectedFolder && selectedFolder.files[0]){
+    openFile(selectedFolder.files[0])
+  }
+})
+
+document.getElementById("fileList").addEventListener("click", event => {
+  const link = event.target.closest("a.file-link")
+  if(!link || !selectedFolder){ return }
+  const file = selectedFolder.files.find(item => item.path === link.getAttribute("href"))
+  if(file){
+    event.preventDefault()
+    openFile(file)
+  }
+})
+
+window.addEventListener("pagehide", flushUnsyncedToSession)
+window.addEventListener("beforeunload", flushUnsyncedToSession)
+document.querySelectorAll(".menu a[href]").forEach(link => {
+  link.addEventListener("click", async event => {
+    const href = link.getAttribute("href")
+    if(!href || href === "#" || href.toLowerCase().startsWith("javascript:")){ return }
+    event.preventDefault()
+    stopRealtimeTracking()
+    await syncTrackedTime(true)
+    flushUnsyncedToSession()
+    window.location.href = href
+  })
+})
+
+baseSpentSeconds = getServerSpentSeconds(currentUser)
+unsyncedSeconds = loadPendingSeconds()
+renderLiveSpent()
+fetchSpentSnapshot()
+startRealtimeTracking()
+renderFolders(questionPaperFolders)
+</script>
+</body>
+</html>

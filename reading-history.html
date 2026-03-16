@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading History</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 12% 14%, rgba(110,124,196,.28), transparent 28%),radial-gradient(circle at 86% 18%, rgba(242,186,122,.24), transparent 22%),radial-gradient(circle at 76% 82%, rgba(112,182,175,.22), transparent 24%),repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 22px),linear-gradient(160deg,#ecebf6 0%,#f7efe6 50%,#e4f1ed 100%);min-height:100vh;padding:22px;display:flex}
+.frame{width:min(1280px,100%);margin:0 auto;background:rgba(255,255,255,.94);border:1px solid #ddd;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.12);overflow:hidden;display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 44px)}
+.sidebar{background:linear-gradient(180deg,#f0f0f0,#ebebeb);border-right:1px solid #e4e4e4;padding:20px 14px}
+.brand{font-size:16px;font-weight:700;margin-bottom:18px}
+.side-title{font-size:11px;color:#818181;margin:14px 8px 8px;text-transform:uppercase;letter-spacing:.6px}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu a{text-decoration:none;font-size:13px;color:#373737;padding:9px 10px;border-radius:8px}
+.menu a.active{background:#202020;color:#fff}
+.menu a:hover{background:#dedede}
+.content{padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,248,248,.95));min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.title{margin:0;font-size:30px}
+.sub{font-size:12px;color:#666}
+.btn{border:none;border-radius:8px;background:#2b2b2b;color:#fff;padding:9px 12px;cursor:pointer}
+.btn:hover{background:#151515}
+.btn.alt{background:#5b5b5b}
+.btn.alt:hover{background:#3d3d3d}
+.panel{background:#fff;border:1px solid #e4e4e4;border-radius:10px;padding:12px}
+.list{display:flex;flex-direction:column;gap:8px;max-height:580px;overflow:auto}
+.item{border:1px solid #e4e4e4;border-radius:8px;padding:10px;background:#fff}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.book{font-size:14px;font-weight:700}
+.meta{font-size:12px;color:#666;margin-top:3px}
+.empty{font-size:13px;color:#666}
+.reader-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+.reader-modal.open{display:flex}
+.reader-shell{width:min(1100px,100%);height:min(88vh,900px);background:#fff;border-radius:10px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.reader-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e4e4e4;gap:12px}
+.reader-head h3{margin:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader-frame{width:100%;height:100%;border:0}
+@media (max-width:1000px){.frame{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="sidebar">
+    <div class="brand">Library Portal</div>
+    <div class="menu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="borrowed.html">Borrowed Books</a>
+      <a href="textbooks.html">Textbooks</a>
+      <a href="magazines.html">Magazines</a>
+      <a class="active" href="#">Reading History</a>
+      <a href="fines-dues.html">Fine & Dues</a>
+      <a href="year-resources.html">Year Resources</a>
+      <a href="announcements.html">Announcements</a>
+    </div>
+    <div class="side-title">Account</div>
+    <div class="menu">
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout(event)">Logout</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="top">
+      <div>
+        <h1 class="title">Reading History</h1>
+        <div class="sub" id="who"></div>
+      </div>
+      <button class="btn alt" id="clearBtn">Clear History</button>
+    </div>
+
+    <section class="panel">
+      <div class="sub" id="countLine">0 books opened</div>
+      <div class="list" id="historyList"></div>
+    </section>
+  </main>
+</div>
+
+<div class="reader-modal" id="readerModal" role="dialog" aria-modal="true">
+  <div class="reader-shell">
+    <div class="reader-head">
+      <h3 id="readerTitle">Reader</h3>
+      <button class="btn" onclick="closeReader()">Close</button>
+    </div>
+    <iframe class="reader-frame" id="readerFrame" title="Book Reader"></iframe>
+  </div>
+</div>
+
+<script>
+const raw = sessionStorage.getItem("libraryUser")
+if(!raw){ window.location.href = "index.html" }
+let currentUser = null
+try{ currentUser = JSON.parse(raw) } catch { window.location.href = "index.html" }
+if(!currentUser || !currentUser.registrationNo){ window.location.href = "index.html" }
+
+const historyKey = `reading_history_${currentUser.registrationNo}`
+const who = `${currentUser.fullName || currentUser.name || "Student"} (${currentUser.registrationNo})`
+document.getElementById("who").innerText = who
+
+function getHistory(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(historyKey) || "[]")
+    return Array.isArray(arr) ? arr : []
+  } catch {
+    return []
+  }
+}
+
+function formatDate(iso){
+  const d = new Date(iso)
+  if(Number.isNaN(d.getTime())){ return "-" }
+  return d.toLocaleString("en-IN", { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" })
+}
+
+function renderHistory(){
+  const items = getHistory()
+  document.getElementById("countLine").innerText = `${items.length} books opened`
+  const root = document.getElementById("historyList")
+  if(items.length === 0){
+    root.innerHTML = '<div class="empty">No reading history yet. Open items from Textbooks, Magazines, or Year Resources and they will appear here.</div>'
+    return
+  }
+
+  root.innerHTML = items.map((item, idx) => `
+    <article class="item">
+      <div class="row">
+        <div>
+          <div class="book">${item.title || "Untitled"}</div>
+          <div class="meta">Type: ${item.source || "Textbook"}</div>
+          <div class="meta">Author: ${item.author || "Unknown"}</div>
+          <div class="meta">Opened: ${formatDate(item.openedAt)}</div>
+        </div>
+        <button class="btn" data-read="${idx}">Read Again</button>
+      </div>
+    </article>
+  `).join("")
+
+  root.querySelectorAll("button[data-read]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const i = Number(btn.getAttribute("data-read"))
+      const item = items[i]
+      if(item && item.path){
+        openReader(item.title || "Reader", item.path)
+      }
+    })
+  })
+}
+
+function openReader(title, path){
+  document.getElementById("readerTitle").textContent = title
+  document.getElementById("readerFrame").src = `${path}#toolbar=1&navpanes=0&view=FitH`
+  document.getElementById("readerModal").classList.add("open")
+}
+
+function closeReader(){
+  document.getElementById("readerModal").classList.remove("open")
+  document.getElementById("readerFrame").src = ""
+}
+
+function logout(e){
+  if(e){ e.preventDefault() }
+  sessionStorage.removeItem("libraryUser")
+  window.location.href = "index.html"
+}
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+  localStorage.removeItem(historyKey)
+  renderHistory()
+})
+
+document.getElementById("readerModal").addEventListener("click", e => {
+  if(e.target.id === "readerModal"){ closeReader() }
+})
+
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){ closeReader() }
+})
+
+renderHistory()
+</script>
+</body>
+</html>

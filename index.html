@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Page</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(138, 45, 77, 0.18), transparent 34%),
+        radial-gradient(circle at 86% 82%, rgba(90, 122, 158, 0.20), transparent 36%),
+        linear-gradient(140deg, #f7efe4 0%, #eedfca 52%, #e9d3be 100%);
+    background-size: 140% 140%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+    animation: bgShift 14s ease-in-out infinite alternate;
+}
+
+body::before{
+    content:"";
+    position:absolute;
+    width:460px;
+    height:460px;
+    border-radius:50%;
+    left:-150px;
+    top:-170px;
+    background: radial-gradient(circle, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 70%);
+    pointer-events:none;
+}
+
+body::after{
+    content:"";
+    position:absolute;
+    width:360px;
+    height:360px;
+    border-radius:50%;
+    right:-120px;
+    bottom:-130px;
+    background: radial-gradient(circle, rgba(138,45,77,0.20) 0%, rgba(138,45,77,0) 70%);
+    pointer-events:none;
+}
+
+@keyframes bgShift{
+    0%{ background-position: 0% 40%; }
+    100%{ background-position: 100% 60%; }
+}
+
+.container{
+    width:900px;
+    min-height:500px;
+    display:flex;
+    align-items:stretch;
+    gap:18px;
+    position:relative;
+    z-index:1;
+}
+
+.container::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:36px;
+    bottom:36px;
+    width:1px;
+    background:linear-gradient(180deg, rgba(138,45,77,0), rgba(138,45,77,0.22), rgba(138,45,77,0));
+    transform:translateX(-50%);
+    pointer-events:none;
+}
+
+/* LEFT SIDE */
+
+.left{
+    width:50%;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(252,248,244,0.84));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius:22px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:0 18px 40px rgba(86,48,33,0.10);
+}
+
+.left::before{
+    content:"";
+    position:absolute;
+    inset:18px;
+    width:auto;
+    height:auto;
+    border-radius:22px;
+    background:linear-gradient(145deg, rgba(138,45,77,0.06), rgba(255,255,255,0));
+    pointer-events:none;
+}
+
+.left::after{
+    content:"";
+    position:absolute;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(138,45,77,0.22) 0%, rgba(138,45,77,0) 70%);
+    top:-70px;
+    left:-70px;
+}
+
+.left-content::after{
+    content:"";
+    position:absolute;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(90,122,158,0.20) 0%, rgba(90,122,158,0) 70%);
+    bottom:-120px;
+    right:-90px;
+    z-index:-1;
+}
+
+.left img{
+    width:240px;
+    filter: drop-shadow(0 14px 24px rgba(0,0,0,0.16));
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+    border:none;
+    border-radius:0;
+    background:transparent;
+    mix-blend-mode:multiply;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+.left-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 320px;
+    width:100%;
+}
+
+.portal-tag{
+    letter-spacing: 1.3px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color:#6f1f3a;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(111,31,58,0.22);
+    border-radius: 999px;
+    padding: 6px 12px;
+    margin-top: 14px;
+}
+
+.left h3{
+    color:#2b1a12;
+    font-size: 28px;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+.left .quote{
+    font-style: italic;
+    margin: 10px 0 0;
+    color: #4c362a;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* RIGHT SIDE */
+
+.right{
+    width:50%;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(252,248,244,0.84));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:28px;
+    box-sizing:border-box;
+    overflow:visible;
+    position:relative;
+    border-radius:22px;
+    box-shadow:0 18px 40px rgba(86,48,33,0.10);
+}
+
+.right::before{
+    content:"";
+    position:absolute;
+    inset:18px;
+    border-radius:22px;
+    background:linear-gradient(145deg, rgba(138,45,77,0.06), rgba(255,255,255,0));
+    pointer-events:none;
+}
+
+.auth-shell{
+    width:min(420px, 100%);
+    position:relative;
+    z-index:1;
+}
+
+.auth-panel{
+    background:rgba(255,255,255,0.88);
+    border:1px solid rgba(111,31,58,0.10);
+    border-radius:22px;
+    box-shadow:0 18px 40px rgba(86,48,33,0.10);
+    padding:26px 24px 22px;
+    backdrop-filter:blur(10px);
+}
+
+.auth-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 12px;
+    border-radius:999px;
+    background:rgba(138,45,77,0.08);
+    color:#7a2845;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.auth-panel h2{
+    text-align:left;
+    color:#221812;
+    margin:16px 0 18px;
+    font-size:26px;
+}
+
+.login-box,
+.forgot-box,
+.register-box{
+    width:100%;
+}
+
+.form-panel{
+    display:none;
+    opacity:0;
+    transform:translateY(14px);
+    animation:panelEnter .35s ease forwards;
+}
+
+.form-panel.active{
+    display:block;
+}
+
+@keyframes panelEnter{
+    from{
+        opacity:0;
+        transform:translateY(14px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.fields{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.field label{
+    font-size:12px;
+    font-weight:700;
+    color:#5d4032;
+}
+
+.field-hint{
+    margin:2px 0 0;
+    font-size:11px;
+    color:#8a7366;
+}
+
+input, select{
+    width:100%;
+    padding:12px 13px;
+    margin:0;
+    border:1px solid rgba(108, 77, 58, 0.18);
+    border-radius:12px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #222;
+    font-size:14px;
+    transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#8a2d4d;
+    color:white;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+    letter-spacing:.2px;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+button:hover{
+    background:#6f1f3a;
+    transform:translateY(-1px);
+    box-shadow:0 12px 24px rgba(138,45,77,0.18);
+}
+
+.google-btn{
+    background:white;
+    border:1px solid #ccc;
+    color:black;
+    margin-bottom:10px;
+}
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color: #333;
+    margin:16px 0 18px;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.options a{
+    color:#8a2d4d;
+    text-decoration:none;
+}
+
+.options a:hover{
+    text-decoration:underline;
+}
+
+.options-left{
+    justify-content:flex-start;
+}
+
+.error{
+    color:#bb2f2f;
+    font-size:13px;
+    min-height:18px;
+    margin:14px 0 0;
+}
+
+.success{
+    color:#1d7c49;
+    font-size:13px;
+    min-height:18px;
+    margin:8px 0 0;
+}
+
+.link-btn{
+    width:100%;
+    padding:12px;
+    background:transparent;
+    color:#8a2d4d;
+    border:1px solid #8a2d4d;
+    border-radius:12px;
+    cursor:pointer;
+    margin-top:12px;
+}
+
+.link-btn:hover{
+    background:rgba(138,45,77,0.08);
+}
+
+input, select {
+    box-sizing: border-box;
+}
+
+input:focus, select:focus {
+    border-color: #8a2d4d;
+    box-shadow: 0 0 0 4px rgba(138, 45, 77, 0.12);
+    transform:translateY(-1px);
+    outline:none;
+}
+
+@media (max-width:920px){
+    .container{
+        width:min(900px, calc(100vw - 28px));
+        height:auto;
+        flex-direction:column;
+        gap:14px;
+    }
+    .container::after{
+        left:32px;
+        right:32px;
+        top:50%;
+        bottom:auto;
+        width:auto;
+        height:1px;
+        transform:translateY(-50%);
+    }
+    .left,.right{
+        width:100%;
+    }
+    .left,
+    .right{
+        min-height:auto;
+        padding:18px;
+    }
+    .auth-panel{
+        padding:22px 18px 18px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LEFT SIDE -->
+<div class="left">
+
+<div class="left-content">
+<img src="data-analyst.png" alt="login image">
+
+<span class="portal-tag">Welcome Back</span>
+<h3>Library Portal</h3>
+<p class="quote">
+    "A library is not a luxury but one of the necessities of life."
+</p>
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+<div class="right">
+
+<div class="auth-shell">
+<div class="auth-panel">
+
+<span class="auth-kicker">Student Access</span>
+
+<div class="login-box form-panel active">
+
+<h2>Login Portal</h2>
+
+<div class="fields">
+<div class="field">
+<label for="registration">Registration Number</label>
+<input type="text" id="registration" placeholder="Enter registration number" required>
+</div>
+
+<div class="field">
+<label for="password">Password</label>
+<input type="password" id="password" placeholder="Enter password" required>
+</div>
+</div>
+
+<div class="options">
+<a href="#" onclick="showForgotPassword(event)">Forgot Password?</a>
+<a href="#" onclick="showRegister(event)">Create Account</a>
+</div>
+
+<button onclick="login()">Login</button>
+
+<p class="error" id="error"></p>
+<p class="success" id="loginSuccess"></p>
+
+</div>
+
+<div class="forgot-box form-panel" id="forgotBox">
+
+<h2>Change Password</h2>
+
+<div class="fields">
+<div class="field">
+<label for="fpRegistration">Registration Number</label>
+<input type="text" id="fpRegistration" placeholder="Enter registration number" required>
+</div>
+<div class="field">
+<label for="fpDob">Date of Birth</label>
+<input type="date" id="fpDob" required>
+</div>
+<div class="field">
+<label for="fpNewPassword">New Password</label>
+<input type="password" id="fpNewPassword" placeholder="Create new password" required>
+</div>
+<div class="field">
+<label for="fpConfirmPassword">Confirm New Password</label>
+<input type="password" id="fpConfirmPassword" placeholder="Re-enter new password" required>
+</div>
+</div>
+
+<button onclick="changePassword()">Update Password</button>
+<button class="link-btn" onclick="showLogin()">Back to Login</button>
+
+<p class="error" id="fpError"></p>
+<p class="success" id="fpSuccess"></p>
+
+</div>
+
+<div class="register-box form-panel" id="registerBox">
+
+<h2>Create Account</h2>
+
+<div class="fields">
+<div class="field">
+<label for="regFullName">Full Name</label>
+<input type="text" id="regFullName" placeholder="Enter full name" required>
+</div>
+<div class="field">
+<label for="regRegistration">Registration Number</label>
+<input type="text" id="regRegistration" placeholder="Enter registration number" required>
+</div>
+<div class="field">
+<label for="regDob">Date of Birth</label>
+<input type="date" id="regDob" required>
+</div>
+<div class="field">
+<label for="regGender">Gender</label>
+<select id="regGender" required>
+<option value="">Select Gender</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+</select>
+</div>
+<div class="field">
+<label for="regBranch">Branch</label>
+<select id="regBranch" required>
+<option value="">Select Branch</option>
+<option value="CSE">CSE</option>
+<option value="ECE">ECE</option>
+<option value="EEE">EEE</option>
+<option value="MECH">MECH</option>
+<option value="CIVIL">CIVIL</option>
+<option value="IT">IT</option>
+</select>
+</div>
+<div class="field">
+<label for="regYear">BTech Year</label>
+<select id="regYear" required>
+<option value="">Select BTech Year</option>
+<option value="1">BTech 1st Year</option>
+<option value="2">BTech 2nd Year</option>
+<option value="3">BTech 3rd Year</option>
+<option value="4">BTech 4th Year</option>
+</select>
+</div>
+<div class="field">
+<label for="regSemester">Semester</label>
+<select id="regSemester" required>
+<option value="">Select Semester</option>
+<option value="1">Semester 1</option>
+<option value="2">Semester 2</option>
+</select>
+</div>
+<div class="field">
+<label for="regPassword">Password</label>
+<input type="password" id="regPassword" placeholder="Create password" required>
+</div>
+<div class="field">
+<label for="regConfirmPassword">Confirm Password</label>
+<input type="password" id="regConfirmPassword" placeholder="Re-enter password" required>
+</div>
+</div>
+
+<button onclick="registerAccount()">Create Account</button>
+
+<div class="options options-left">
+<a href="#" onclick="showLogin(event)">Back to Login</a>
+</div>
+
+<p class="error" id="regError"></p>
+<p class="success" id="regSuccess"></p>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script src="app-config.js"></script>
+<script>
+const API_BASE = window.APP_CONFIG.API_BASE
+
+function setActivePanel(panelId){
+const panels = [
+document.querySelector(".login-box"),
+document.getElementById("forgotBox"),
+document.getElementById("registerBox")
+]
+panels.forEach(panel => {
+panel.classList.remove("active")
+})
+const nextPanel = panelId === "login" ? document.querySelector(".login-box") : document.getElementById(panelId)
+void nextPanel.offsetWidth
+nextPanel.classList.add("active")
+}
+
+function showForgotPassword(event){
+event.preventDefault()
+setActivePanel("forgotBox")
+document.getElementById("loginSuccess").innerText = ""
+document.getElementById("error").innerText = ""
+document.getElementById("fpError").innerText = ""
+document.getElementById("fpSuccess").innerText = ""
+document.getElementById("regError").innerText = ""
+document.getElementById("regSuccess").innerText = ""
+}
+
+function showRegister(event){
+if(event){ event.preventDefault() }
+setActivePanel("registerBox")
+document.getElementById("loginSuccess").innerText = ""
+document.getElementById("error").innerText = ""
+document.getElementById("fpError").innerText = ""
+document.getElementById("fpSuccess").innerText = ""
+document.getElementById("regError").innerText = ""
+document.getElementById("regSuccess").innerText = ""
+}
+
+function showLogin(event){
+if(event){ event.preventDefault() }
+setActivePanel("login")
+document.getElementById("error").innerText = ""
+document.getElementById("loginSuccess").innerText = ""
+document.getElementById("fpError").innerText = ""
+document.getElementById("fpSuccess").innerText = ""
+document.getElementById("regError").innerText = ""
+document.getElementById("regSuccess").innerText = ""
+}
+
+async function apiPost(path, payload){
+const response = await fetch(`${API_BASE}/${path}`, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify(payload)
+})
+
+const data = await response.json().catch(() => ({ message: "Unexpected server response." }))
+if(!response.ok){
+throw new Error(data.message || "Request failed")
+}
+return data
+}
+
+async function login(){
+
+let registration = document.getElementById("registration").value
+let password = document.getElementById("password").value
+
+if(registration=="" || password==""){
+document.getElementById("error").innerText="Please enter registration number and password"
+document.getElementById("loginSuccess").innerText=""
+return
+}
+
+try{
+const result = await apiPost("login", {
+registrationNo: registration,
+password: password
+})
+document.getElementById("error").innerText = ""
+document.getElementById("loginSuccess").innerText = result.message
+document.getElementById("registration").value = ""
+document.getElementById("password").value = ""
+sessionStorage.setItem("libraryUser", JSON.stringify(result.user))
+sessionStorage.setItem("libraryLoginMessage", result.message)
+window.location.href = "dashboard.html"
+}
+catch(err){
+document.getElementById("loginSuccess").innerText = ""
+document.getElementById("error").innerText = err.message
+}
+
+}
+
+async function changePassword(){
+let fpRegistration = document.getElementById("fpRegistration").value
+let fpDob = document.getElementById("fpDob").value
+let fpNewPassword = document.getElementById("fpNewPassword").value
+let fpConfirmPassword = document.getElementById("fpConfirmPassword").value
+
+document.getElementById("fpError").innerText = ""
+document.getElementById("fpSuccess").innerText = ""
+
+if(fpRegistration=="" || fpDob=="" || fpNewPassword=="" || fpConfirmPassword==""){
+document.getElementById("fpError").innerText = "Please fill all fields"
+return
+}
+
+if(fpNewPassword.length < 4){
+document.getElementById("fpError").innerText = "New password must be at least 4 characters"
+return
+}
+
+if(fpNewPassword!==fpConfirmPassword){
+document.getElementById("fpError").innerText = "New password and confirm password do not match"
+return
+}
+
+try{
+const result = await apiPost("reset-password", {
+registrationNo: fpRegistration,
+dateOfBirth: fpDob,
+newPassword: fpNewPassword
+})
+document.getElementById("fpError").innerText = ""
+document.getElementById("fpSuccess").innerText = result.message + " Please login with new password."
+
+document.getElementById("fpRegistration").value = ""
+document.getElementById("fpDob").value = ""
+document.getElementById("fpNewPassword").value = ""
+document.getElementById("fpConfirmPassword").value = ""
+}
+catch(err){
+document.getElementById("fpSuccess").innerText = ""
+document.getElementById("fpError").innerText = err.message
+}
+}
+
+async function registerAccount(){
+let regFullName = document.getElementById("regFullName").value
+let regRegistration = document.getElementById("regRegistration").value
+let regDob = document.getElementById("regDob").value
+let regGender = document.getElementById("regGender").value
+let regBranch = document.getElementById("regBranch").value
+let regYear = document.getElementById("regYear").value
+let regSemester = document.getElementById("regSemester").value
+let regPassword = document.getElementById("regPassword").value
+let regConfirmPassword = document.getElementById("regConfirmPassword").value
+
+document.getElementById("regError").innerText = ""
+document.getElementById("regSuccess").innerText = ""
+
+if(regFullName=="" || regRegistration=="" || regDob=="" || regGender=="" || regBranch=="" || regYear=="" || regSemester=="" || regPassword=="" || regConfirmPassword==""){
+document.getElementById("regError").innerText = "Please fill all fields"
+return
+}
+
+if(regPassword.length < 4){
+document.getElementById("regError").innerText = "Password must be at least 4 characters"
+return
+}
+
+if(regPassword!==regConfirmPassword){
+document.getElementById("regError").innerText = "Password and confirm password do not match"
+return
+}
+
+const regSemesterNum = Number(regSemester)
+if(regSemesterNum !== 1 && regSemesterNum !== 2){
+document.getElementById("regError").innerText = "Each year has only Semester 1 or Semester 2"
+return
+}
+
+try{
+const result = await apiPost("register", {
+fullName: regFullName,
+registrationNo: regRegistration,
+password: regPassword,
+dateOfBirth: regDob,
+gender: regGender,
+btechBranch: regBranch,
+academicYear: Number(regYear),
+semester: regSemesterNum
+})
+document.getElementById("regSuccess").innerText = result.message
+document.getElementById("regFullName").value = ""
+document.getElementById("regRegistration").value = ""
+document.getElementById("regDob").value = ""
+document.getElementById("regGender").value = ""
+document.getElementById("regBranch").value = ""
+document.getElementById("regYear").value = ""
+document.getElementById("regSemester").value = ""
+document.getElementById("regPassword").value = ""
+document.getElementById("regConfirmPassword").value = ""
+}
+catch(err){
+document.getElementById("regError").innerText = err.message
+}
+}
+
+</script>
+
+</body>
+</html>
+
