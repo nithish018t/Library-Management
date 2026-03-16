@@ -649,17 +649,38 @@ document.getElementById("regSuccess").innerText = ""
 }
 
 async function apiPost(path, payload){
+const maxAttempts = 3
+
+for(let attempt = 1; attempt <= maxAttempts; attempt++){
 const response = await fetch(`${API_BASE}/${path}`, {
 method: "POST",
 headers: { "Content-Type": "application/json" },
 body: JSON.stringify(payload)
-})
+}).catch(error => ({ networkError: error }))
+
+if(response?.networkError){
+if(attempt < maxAttempts){
+await new Promise(resolve => setTimeout(resolve, 6000))
+continue
+}
+throw new Error("Server is waking up. Please wait a few seconds and try again.")
+}
 
 const data = await response.json().catch(() => ({ message: "Unexpected server response." }))
-if(!response.ok){
+if(response.ok){
+return data
+}
+
+const retryableStatus = [502, 503, 504]
+if(retryableStatus.includes(response.status) && attempt < maxAttempts){
+await new Promise(resolve => setTimeout(resolve, 6000))
+continue
+}
+
 throw new Error(data.message || "Request failed")
 }
-return data
+
+throw new Error("Server is waking up. Please wait a few seconds and try again.")
 }
 
 async function login(){
